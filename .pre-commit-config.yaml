@@ -1,0 +1,20 @@
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.3.0
+  hooks:
+    - id: check-merge-conflict
+    - id: check-yaml
+    - id: check-toml
+    - id: end-of-file-fixer
+    - id: debug-statements
+    - id: check-docstring-first
+    - id: trailing-whitespace
+    - id: fix-encoding-pragma
+    - id: flake8
+      args:
+        - --ignore=E203, E501, W503, E402
+        - --exclude=(\*_pb2.py|\*_pb2_grpc.py)
+- repo: https://github.com/psf/black
+  rev: stable
+  hooks:
+    - id: black
+      language_version: python3
