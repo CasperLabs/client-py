@@ -48,12 +48,16 @@ def proto_compiler_check():
 
 def casperlabs_repo_check():
     if not os.path.exists(CASPERLABS_DIR):
-        sys.stderr.write(f"CasperLabs repo directory not found at `{CASPERLABS_DIR}`\n"
-                         "It is expected that https://github.com/CasperLabs/CasperLabs repo will exist "
-                         "at the same directory level as the `client-py` repo, as it holds dependencies.\n")
+        sys.stderr.write(
+            f"CasperLabs repo directory not found at `{CASPERLABS_DIR}`\n"
+            "It is expected that https://github.com/CasperLabs/CasperLabs repo will exist "
+            "at the same directory level as the `client-py` repo, as it holds dependencies.\n"
+        )
         sys.exit(-1)
     if not os.path.exists(PROTOBUF_DIR):
-        sys.stderr.write(f"CasperLabs protobuf source files directory not found at `{PROTOBUF_DIR}`\n")
+        sys.stderr.write(
+            f"CasperLabs protobuf source files directory not found at `{PROTOBUF_DIR}`\n"
+        )
         sys.exit(-1)
 
 
