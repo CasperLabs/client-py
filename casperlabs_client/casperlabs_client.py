@@ -405,6 +405,7 @@ class CasperLabsClient:
         dependencies=None,
         chain_name: str = None,
         private_key: str = None,
+        algorithm: str = ED25519_KEY_ALGORITHM,
     ):
         if len(list(filter(None, (target_purse, target_account)))) != 1:
             raise ValueError("must include either target_account or target_purse")
@@ -436,6 +437,7 @@ class CasperLabsClient:
             dependencies=dependencies,
             chain_name=chain_name,
             transfer_args=transfer_args,
+            algorithm=algorithm,
         )
 
     @api

@@ -6,7 +6,7 @@ from casperlabs_client import CasperLabsClient
 from casperlabs_client.abi import ABI
 
 THIS_DIRECTORY = Path(os.path.dirname(os.path.realpath(__file__)))
-CASPERLABS_ROOT_DIRECTORY = THIS_DIRECTORY.parent.parent.parent
+CASPERLABS_ROOT_DIRECTORY = THIS_DIRECTORY.parent.parent.parent / "CasperLabs"
 
 WASM_DIRECTORY = (
     CASPERLABS_ROOT_DIRECTORY
@@ -56,6 +56,9 @@ def faucet_fund_account(casperlabs_client, account_hash_hex, amount=1000000000):
         session_args=session_args,
     )
     result = casperlabs_client.show_deploy(deploy_hash, wait_for_processed=True)
+    assert (
+        len(result.processing_results) > 0
+    ), "No processing results from faucet transfer"
     block_hash = result.processing_results[0].block_info.summary.block_hash
     result = casperlabs_client.balance(account_hash_hex, block_hash.hex())
-    assert result > 0
+    assert result > 0, "balance of new account is not correct"

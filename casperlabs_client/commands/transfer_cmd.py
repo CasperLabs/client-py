@@ -8,6 +8,7 @@ from casperlabs_client.commands.common_options import (
     private_key_option,
     WAIT_PROCESSED_OPTION,
     TIMEOUT_SECONDS_OPTION,
+    ALGORITHM_OPTION,
 )
 from casperlabs_client.decorators import guarded_command
 
@@ -54,6 +55,7 @@ OPTIONS = [
     TTL_MILLIS_OPTION,
     WAIT_PROCESSED_OPTION,
     TIMEOUT_SECONDS_OPTION,
+    ALGORITHM_OPTION,
     private_key_option(required=True),
 ]
 
@@ -70,6 +72,7 @@ def method(casperlabs_client: CasperLabsClient, args: dict):
         ttl_millis=args.get("ttl_millis"),
         dependencies=args.get("dependencies"),
         chain_name=args.get("chain_name"),
+        algorithm=args.get("algorithm"),
     )
     print(f"Success! Deploy {deploy_hash} deployed")
     if args.get("wait_for_processed", False):
