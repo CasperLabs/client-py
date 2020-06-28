@@ -4,7 +4,7 @@ from casperlabs_client.consts import SUPPORTED_KEY_ALGORITHMS, ED25519_KEY_ALGOR
 from casperlabs_client.arg_types import algorithm, directory_for_write, positive_integer
 
 ALGORITHM_OPTION = [
-    ("-a", "--algorithm"),
+    ("--algorithm",),
     dict(
         required=False,
         type=algorithm,

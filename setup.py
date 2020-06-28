@@ -216,13 +216,13 @@ setup(
     version=read_version(),
     packages=find_packages(exclude=["tests"]),
     setup_requires=[
-        "protobuf==3.11.3",
+        "protobuf==3.12.2",
         "grpcio-tools>=1.20",
         "in-place==0.4.0",
         "grpcio>=1.20",
     ],
     install_requires=[
-        "protobuf==3.11.3",
+        "protobuf==3.12.2",
         "grpcio>=1.20",
         "grpclib==0.3.1",
         "pyblake2==1.1.2",
