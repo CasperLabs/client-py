@@ -131,7 +131,7 @@ see [source](https://github.com/CasperLabs/CasperLabs/blob/dev/integration-testi
 The API functions are marked with `@api` decorator.
 
 After installing `casperlabs-client` you can start interacting with
-[CasperLabs devnet](https://clarity.casperlabs.io).
+[CasperLabs Testnet](https://clarity.casperlabs.io).
 
 
 ```python
@@ -188,7 +188,7 @@ Bold arrows point to main parents of blocks.
 
 ## Deploying smart contracts
 
-To deploy a smart contract to CasperLabs devnet you have to first:
+To deploy a smart contract to CasperLabs Testnet you have to first:
 
 1. Create an account using [CasperLabs Explorer](https://clarity.casperlabs.io/#/)
 and transfer (free) tokens to the account from the faucet.
