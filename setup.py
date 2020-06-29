@@ -108,13 +108,9 @@ def collect_proto_files():
 
     print("Collect files...")
 
-    copyfile(
-        join(dirname(grpc_tools.__file__), "_proto/google/protobuf/wrappers.proto"),
-        PROTO_DIR / "wrappers.proto",
-    )
-
     for file_name in Path(PROTOBUF_DIR).glob("**/*.proto"):
         copyfile(file_name, PROTO_DIR / basename(file_name))
+
     print("Finished collecting files...")
 
 
