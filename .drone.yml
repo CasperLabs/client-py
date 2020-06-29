@@ -80,7 +80,7 @@ steps:
   commands:
   - "./build.sh"
 
-- name: pypi-publish
+- name: pypi-publish-tag
   image: tvasile1012/pypi:latest
   failure: "ignore"
   settings:
@@ -91,6 +91,21 @@ steps:
     setupfile: "./setup.py"
     dist_dir: "./dist/"
     skip_build: true
+  depends_on:
+  - build-python-client-tag
+
+- name: github-publish-tag
+  settings:
+    api_key:
+      from_secret: github_token
+    checksum:
+    - sha256
+    - md5
+    files:
+    - "./dist/*.gz"
+    prerelease:
+    - true
+  image: plugins/github-release
   depends_on:
   - build-python-client-tag
 
