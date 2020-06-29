@@ -24,7 +24,7 @@ THIS_DIRECTORY = Path(os.path.dirname(os.path.realpath(__file__)))
 # Directory with Scala client's bundled contracts
 
 CASPERLABS_DIR = THIS_DIRECTORY.parent / "CasperLabs"
-PROTOBUF_DIR = CASPERLABS_DIR / "protobuf"
+PROTOBUF_DIR = THIS_DIRECTORY / "protobuf"
 PROTO_DIR = THIS_DIRECTORY / "casperlabs_client" / "proto"
 PACKAGE_DIR = THIS_DIRECTORY / "casperlabs_client"
 VERSION_FILE = PACKAGE_DIR / "VERSION"
@@ -46,24 +46,9 @@ def proto_compiler_check():
         sys.exit(-1)
 
 
-def casperlabs_repo_check():
-    if not os.path.exists(CASPERLABS_DIR):
-        sys.stderr.write(
-            f"CasperLabs repo directory not found at `{CASPERLABS_DIR}`\n"
-            "It is expected that https://github.com/CasperLabs/CasperLabs repo will exist "
-            "at the same directory level as the `client-py` repo, as it holds dependencies.\n"
-        )
-        sys.exit(-1)
-    if not os.path.exists(PROTOBUF_DIR):
-        sys.stderr.write(
-            f"CasperLabs protobuf source files directory not found at `{PROTOBUF_DIR}`\n"
-        )
-        sys.exit(-1)
-
-
 def python_compiler_check():
     if sys.version < "3.7":
-        sys.stderr.write(f"{NAME} is only supported on Python versions 3.7.\n")
+        sys.stderr.write(f"{NAME} is only supported on Python versions 3.7+.\n")
         sys.exit(-1)
 
 
@@ -123,34 +108,12 @@ def collect_proto_files():
 
     print("Collect files...")
 
-    download(
-        "https://raw.githubusercontent.com/scalapb/ScalaPB/master/protobuf/scalapb/scalapb.proto",
-        PROTO_DIR,
-    )
-
-    copyfile(
-        join(dirname(grpc_tools.__file__), "_proto/google/protobuf/empty.proto"),
-        PROTO_DIR / "empty.proto",
-    )
-    copyfile(
-        join(dirname(grpc_tools.__file__), "_proto/google/protobuf/descriptor.proto"),
-        PROTO_DIR / "descriptor.proto",
-    )
     copyfile(
         join(dirname(grpc_tools.__file__), "_proto/google/protobuf/wrappers.proto"),
         PROTO_DIR / "wrappers.proto",
     )
 
-    download(
-        "https://raw.githubusercontent.com/CasperLabs/CasperLabs/dev/protobuf/google/api/annotations.proto",
-        PROTO_DIR,
-    )
-    download(
-        "https://raw.githubusercontent.com/CasperLabs/CasperLabs/dev/protobuf/google/api/http.proto",
-        PROTO_DIR,
-    )
-
-    for file_name in Path(PROTOBUF_DIR / "io").glob("**/*.proto"):
+    for file_name in Path(PROTOBUF_DIR).glob("**/*.proto"):
         copyfile(file_name, PROTO_DIR / basename(file_name))
     print("Finished collecting files...")
 
@@ -165,7 +128,6 @@ def clean_up():
 
 
 def run_codegen():
-    casperlabs_repo_check()
     python_compiler_check()
     proto_compiler_check()
     clean_up()
@@ -180,11 +142,11 @@ def run_codegen():
         [(r"(import .*_pb2)", r"from . \1")],
         glob(f"{PACKAGE_DIR}/*pb2*py"),
     )
-    modify_files(
-        "Patch generated Python gRPC modules (for asyncio)",
-        [(r"(import .*_pb2)", r"from . \1")],
-        [fn for fn in glob(f"{PACKAGE_DIR}/*_grpc[.]py") if "_pb2_" not in fn],
-    )
+    # modify_files(
+    #     "Patch generated Python gRPC modules (for asyncio)",
+    #     [(r"(import .*_pb2)", r"from . \1")],
+    #     [fn for fn in glob(f"{PACKAGE_DIR}/*_grpc[.]py") if "_pb2_" not in fn],
+    # )
 
 
 def prepare_sdist():
