@@ -7,7 +7,6 @@ from casperlabs_client.io import read_binary_file
 from . import consensus_pb2 as consensus
 
 from .abi import ABI
-from .consts import DEFAULT_PAYMENT_AMOUNT
 
 
 @dataclass
@@ -186,7 +185,7 @@ class PaymentCode(ContractCode):
     def __post_init__(self):
         """ Use post init for validate to handle any creation method """
         if not any(self._payment_options):
-            self.payment_amount = DEFAULT_PAYMENT_AMOUNT
+            raise ValueError("No valid deploy payment options received.")
         self.validate()
 
     def validate(self) -> None:

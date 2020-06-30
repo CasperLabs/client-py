@@ -34,3 +34,8 @@ def validator_keys_directory():
     with tempfile.TemporaryDirectory() as directory:
         CasperLabsClient.validator_keygen(directory)
         yield Path(directory)
+
+
+@pytest.fixture
+def client():
+    return CasperLabsClient()
