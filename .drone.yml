@@ -1,0 +1,145 @@
+---
+platform:
+  os: linux
+  arch: amd64
+
+# Begin
+clone:
+  git-clone:
+    commands: |
+      set -ex
+      git clone -b ${DRONE_TAG:-$DRONE_BRANCH} $DRONE_REMOTE_URL .
+      if [ x$DRONE_PULL_REQUEST != x ]; then
+          git fetch origin refs/pull/$DRONE_PULL_REQUEST/head
+          EMAIL=ci git merge --no-edit FETCH_HEAD
+      fi
+      git rev-parse HEAD
+    image: "casperlabs/buildenv"
+
+# NOTE: Anchors are per document
+# Anchor for default buildenv
+__buildenv: &buildenv
+  image: "casperlabs/buildenv:latest"
+
+kind: pipeline
+name: build
+
+steps:
+- name: update-test-version
+  <<: *buildenv
+  commands:
+  - "VERSION=`cat casperlabs_client/VERSION`"
+  - "echo $VERSION.$DRONE_BUILD_NUMBER > casperlabs_client/VERSION"
+  - sed -i 's/NAME = \"casperlabs_client\"/NAME = \"casperlabs_client_test\"/g' setup.py
+
+- name: build-python-client
+  <<: *buildenv
+  commands:
+  - "./build.sh"
+  depends_on:
+  - update-test-version
+
+- name: test-pypi-publish
+  image: tvasile1012/pypi:latest
+  failure: "ignore"
+  settings:
+    username:
+      from_secret: test_pypi_user
+    password:
+      from_secret: test_pypi_pass
+    repository: "https://test.pypi.org/legacy/"
+    setupfile: "./setup.py"
+    dist_dir: "./dist/"
+    skip_build: true
+  when:
+    branch:
+    - dev
+    event:
+    - push
+  depends_on:
+  - build-python-client
+
+trigger:
+  branch:
+  - dev
+  - master
+  - trying
+  - staging
+
+---
+# Anchor for default buildenv
+__buildenv: &buildenv
+  image: "casperlabs/buildenv:latest"
+
+kind: pipeline
+name: on-tag
+
+steps:
+- name: build-python-client-tag
+  <<: *buildenv
+  commands:
+  - "./build.sh"
+
+- name: pypi-publish-tag
+  image: tvasile1012/pypi:latest
+  failure: "ignore"
+  settings:
+    username:
+      from_secret: pypi_user
+    password:
+      from_secret: pypi_pass
+    setupfile: "./setup.py"
+    dist_dir: "./dist/"
+    skip_build: true
+  depends_on:
+  - build-python-client-tag
+
+- name: github-publish-tag
+  settings:
+    api_key:
+      from_secret: github_token
+    checksum:
+    - sha256
+    - md5
+    files:
+    - "./dist/*.gz"
+    prerelease:
+    - true
+  image: plugins/github-release
+  depends_on:
+  - build-python-client-tag
+
+trigger:
+  ref:
+  - refs/tags/v*
+
+---
+kind: pipeline
+name: failed-build-alert
+
+clone:
+  disable: true
+
+steps:
+- name: notify
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_webhook
+    template:
+    - |
+      client-py build status: *{{ uppercasefirst build.status }}*
+      Author: {{ build.author }}
+      Drone Build: <{{ build.link }}|#{{ build.number }}>
+      Commit Link: <https://github.com/{{repo.owner}}/{{repo.name}}/commit/{{build.commit}}|{{ truncate build.commit 10 }}>
+trigger:
+  status:
+  - failure
+  branch:
+  - dev
+  - master
+  - trying
+  - staging
+
+depends_on:
+- build
