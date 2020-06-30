@@ -3,7 +3,7 @@ MAINTAINER joe@casperlabs.io
 
 
 RUN apt-get update \
-    && apt-get install -y g++ protobuf-compiler \
+    && apt-get install -y --no-install-recommends g++ protobuf-compiler \
     && apt-get clean
 
 # TODO: Install of protobuf-compiler above is 3.6, test to see if this works or if we need the latest version built below
@@ -26,16 +26,9 @@ COPY requirements.txt /src/requirements.txt
 RUN cd /src \
     && pip install -r requirements.txt
 
-# Don't need g++ after requirements install.
-# Saves about 60 MB
-RUN apt-get remove -y g++ \
-    && apt-get autoremove -y
-
-
 COPY . /src
 
 RUN cd /src \
     && python setup.py sdist \
     && ./install.sh \
-    && pytest tests \
-    && rm -rf dist casperlabs_client.egg-info casperlabs_client/proto .eggs .pytest_cache
+    && pytest tests
