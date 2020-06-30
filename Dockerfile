@@ -1,6 +1,8 @@
 FROM python:3.8-slim-buster
-MAINTAINER joe@casperlabs.io
+MAINTAINER "CasperLabs, LLC. <info@casperlabs.io>"
 
+USER root
+WORKDIR /opt/docker
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends g++ protobuf-compiler \
