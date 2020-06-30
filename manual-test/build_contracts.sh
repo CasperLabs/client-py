@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # build contracts to use
-pushd ../../execution-engine || exit
-make build-contracts-rs
+pushd ../../CasperLabs/execution-engine || exit
+cargo build --package faucet --target wasm32-unknown-unknown --release
 popd
+
