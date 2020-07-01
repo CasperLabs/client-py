@@ -101,6 +101,7 @@ def run_protoc(file_names, proto_dir=PROTO_DIR):
                 file_name,
             )
         )
+    clean_up_source_files()
 
 
 def collect_proto_files():
@@ -114,19 +115,25 @@ def collect_proto_files():
     print("Finished collecting files...")
 
 
-def clean_up():
+def clean_up_source_files():
     try:
         shutil.rmtree(PROTO_DIR)
     except FileNotFoundError:
         pass
+
+
+def clean_up_generated_files():
     for file_name in glob(f"{PACKAGE_DIR}/*pb2*py"):
+        os.remove(file_name)
+    for file_name in glob(f"{PACKAGE_DIR}/*grpc.py"):
         os.remove(file_name)
 
 
 def run_codegen():
     python_compiler_check()
     proto_compiler_check()
-    clean_up()
+    clean_up_source_files()
+    clean_up_generated_files()
     make_dirs(f"{PROTO_DIR}")
     collect_proto_files()
     modify_files(
