@@ -60,7 +60,7 @@ steps:
   - build-python-client
 
 - name: test-python-client
-  - <<: *buildenv
+  <<: *buildenv
   commands:
   - pipenv sync
   - pipenv run python setup.py develop
