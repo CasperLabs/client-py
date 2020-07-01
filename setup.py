@@ -105,8 +105,6 @@ def run_protoc(file_names, proto_dir=PROTO_DIR):
 
 
 def collect_proto_files():
-    import grpc_tools
-
     print("Collect files...")
 
     for file_name in Path(PROTOBUF_DIR).glob("**/*.proto"):
@@ -177,9 +175,8 @@ class CDevelop(DevelopCommand):
 
 setup(
     name=NAME,
-    # Version now defined in VERSION file in casperlabs_client directory.
     version=read_version(),
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(),
     setup_requires=[
         "protobuf==3.12.2",
         "grpcio-tools>=1.20",
