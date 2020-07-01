@@ -59,6 +59,21 @@ steps:
   depends_on:
   - build-python-client
 
+- name: test-python-client
+  - <<: *buildenv
+  commands:
+  - pipenv sync
+  - pipenv run python setup.py develop
+  - pipenv run pytest tests
+  when:
+    branch:
+    - dev
+    - v*
+    - master
+    event:
+    - push
+
+
 trigger:
   branch:
   - dev
