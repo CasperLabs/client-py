@@ -288,6 +288,7 @@ class CasperLabsClient:
         payment: str = None,
         session: str = None,
         private_key: str = None,
+        private_key_hex: str = None,
         session_args: bytes = None,
         payment_args: bytes = None,
         payment_amount: int = None,
@@ -362,6 +363,7 @@ class CasperLabsClient:
                 payment=payment,
                 session=session,
                 private_key=private_key,
+                private_key_hex=private_key_hex,
                 session_args=session_args,
                 payment_args=payment_args,
                 payment_amount=payment_amount,
@@ -400,7 +402,8 @@ class CasperLabsClient:
         target_account: Union[str, bytes] = None,
         target_purse: Union[str, bytes] = None,
         source_purse: Union[str, bytes] = None,
-        from_addr: Union[str, bytes] = None,        payment: str = None,
+        from_addr: Union[str, bytes] = None,
+        payment: str = None,
         payment_args: bytes = None,
         payment_amount: int = None,
         payment_hash: bytes = None,
@@ -413,6 +416,7 @@ class CasperLabsClient:
         dependencies=None,
         chain_name: str = None,
         private_key: str = None,
+        private_key_hex: str = None,
         algorithm: str = ED25519_KEY_ALGORITHM,
     ):
         if len(list(filter(None, (target_purse, target_account)))) != 1:
@@ -441,6 +445,7 @@ class CasperLabsClient:
         return self.deploy(
             from_addr=from_addr,
             private_key=private_key,
+            private_key_hex=private_key_hex,
             payment=payment,
             payment_args=payment_args,
             payment_amount=payment_amount,

@@ -56,12 +56,20 @@ class DeployData:
         chain_name = args.get("chain_name", "")
         algorithm = args.get("algorithm")
         private_key_pem_path = args.get("private_key")
+
+        private_key_hex = args.get("private_key_hex")
+        private_key = bytes.fromhex(private_key_hex) if private_key_hex else None
+        public_key_hex = args.get("public_key_hex")
+        public_key = bytes.fromhex(public_key_hex) if public_key_hex else None
+
         public_key_pem_path = args.get("public_key")
         if private_key_pem_path or public_key_pem_path:
             key_holder = key_holders.key_holder_object(
                 algorithm=algorithm,
                 private_key_pem_path=private_key_pem_path,
                 public_key_pem_path=public_key_pem_path,
+                private_key=private_key,
+                public_key=public_key,
             )
         else:
             key_holder = None
