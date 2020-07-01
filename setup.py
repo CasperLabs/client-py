@@ -199,7 +199,8 @@ setup(
     description="Python Client for interacting with a CasperLabs Node",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    package_data={NAME: [str(VERSION_FILE)]},
+    # Hardcoding name for missing version file when package is renamed.
+    package_data={"casperlabs_client": [str(VERSION_FILE)]},
     keywords="casperlabs blockchain ethereum smart-contracts",
     author="CasperLabs LLC",
     author_email="testing@casperlabs.io",
