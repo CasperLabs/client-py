@@ -13,6 +13,7 @@ def test_simple_deploy_build_to_node_comm_failure(client, account_keys_directory
             from_addr=b"12121212121212121212121212121212",
             session_name="contract_name",
             private_key=private_key_pem_path,
+            payment_amount=100000,
         )
     assert "failed to connect" in str(excinfo.value)
 
