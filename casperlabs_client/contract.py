@@ -133,7 +133,8 @@ class SessionCode(ContractCode):
         options_count = len(list(filter(None, session_options)))
         if options_count != 1:
             raise ValueError(
-                "Must have one and only one session, session_hash, session_name, package_hash, or package_name provided"
+                "Must have one and only one session, session_hash, session_name, "
+                "session_package_hash, or session_package_name provided"
             )
 
     @staticmethod
