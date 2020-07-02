@@ -1,0 +1,7 @@
+.tox/
+.eggs/
+.pytest_cache/
+casperlabs_client/proto/
+dist/
+casperlabs_client.egg-info/
+manual-test/

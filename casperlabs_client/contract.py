@@ -7,7 +7,6 @@ from casperlabs_client.io import read_binary_file
 from . import consensus_pb2 as consensus
 
 from .abi import ABI
-from .consts import DEFAULT_PAYMENT_AMOUNT
 
 
 @dataclass
@@ -133,7 +132,8 @@ class SessionCode(ContractCode):
         options_count = len(list(filter(None, session_options)))
         if options_count != 1:
             raise ValueError(
-                "Must have one and only one session, session_hash, session_name, package_hash, or package_name provided"
+                "Must have one and only one session, session_hash, session_name, "
+                "session_package_hash, or session_package_name provided"
             )
 
     @staticmethod
@@ -186,7 +186,7 @@ class PaymentCode(ContractCode):
     def __post_init__(self):
         """ Use post init for validate to handle any creation method """
         if not any(self._payment_options):
-            self.payment_amount = DEFAULT_PAYMENT_AMOUNT
+            raise ValueError("No valid deploy payment options received.")
         self.validate()
 
     def validate(self) -> None:

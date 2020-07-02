@@ -19,6 +19,7 @@ def test_basic_transfer_to_node_comm_failure(account_keys_directory, algorithm):
             amount=10000,
             private_key=account_keys_directory
             / f"{algorithm}{ACCOUNT_PRIVATE_KEY_FILENAME_SUFFIX}",
+            payment_amount=100000,
         )
     assert "failed to connect" in str(excinfo.value)
 
@@ -27,5 +28,8 @@ def test_basic_transfer_to_node_comm_failure(account_keys_directory, algorithm):
 def test_not_only_one_target_arguments(target_account, target_purse):
     with pytest.raises(InternalError):
         CasperLabsClient().transfer(
-            amount=100, target_purse=target_purse, target_account=target_account
+            amount=100,
+            target_purse=target_purse,
+            target_account=target_account,
+            payment_amount=100000,
         )
