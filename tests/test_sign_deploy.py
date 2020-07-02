@@ -19,6 +19,7 @@ def test_sign_deploy(account_keys_directory, algorithm):
         public_key=public_key_pem_path,
         session_name="contract_name",
         algorithm=algorithm,
+        payment_amount=100000,
     )
     signed_by_pem = client.sign_deploy(
         private_key_pem_file=private_key_pem_path, algorithm=algorithm, deploy=deploy

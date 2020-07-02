@@ -9,6 +9,7 @@ from casperlabs_client.commands.common_options import (
     WAIT_PROCESSED_OPTION,
     TIMEOUT_SECONDS_OPTION,
     ALGORITHM_OPTION,
+    PAYMENT_OPTIONS,
 )
 from casperlabs_client.decorators import guarded_command
 
@@ -57,7 +58,7 @@ OPTIONS = [
     TIMEOUT_SECONDS_OPTION,
     ALGORITHM_OPTION,
     private_key_option(required=True),
-]
+] + PAYMENT_OPTIONS
 
 
 @guarded_command
@@ -73,6 +74,14 @@ def method(casperlabs_client: CasperLabsClient, args: dict):
         dependencies=args.get("dependencies"),
         chain_name=args.get("chain_name"),
         algorithm=args.get("algorithm"),
+        payment=args.get("payment"),
+        payment_amount=args.get("payment_amount"),
+        payment_args=args.get("payment_args"),
+        payment_hash=args.get("payment_hash"),
+        payment_name=args.get("payment_name"),
+        payment_entry_point=args.get("payment_entry_point"),
+        payment_package_hash=args.get("payment_package_hash"),
+        payment_package_name=args.get("payment_package_name"),
     )
     print(f"Success! Deploy {deploy_hash} deployed")
     if args.get("wait_for_processed", False):

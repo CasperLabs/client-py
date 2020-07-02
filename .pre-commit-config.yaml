@@ -2,8 +2,6 @@
   rev: v2.3.0
   hooks:
     - id: check-merge-conflict
-    - id: check-yaml
-    - id: check-toml
     - id: end-of-file-fixer
     - id: debug-statements
     - id: check-docstring-first
