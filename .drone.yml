@@ -65,13 +65,6 @@ steps:
   - "pipenv sync"
   - "pipenv run python setup.py develop"
   - "pipenv run pytest tests"
-  when:
-    branch:
-    - dev
-    - v*
-    - master
-    event:
-    - push
 
 
 trigger:
