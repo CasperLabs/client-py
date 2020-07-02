@@ -116,11 +116,11 @@ class CasperLabsClient:
         """
         CasperLabs client's constructor.
 
-        :param host:            Hostname or IP of node on which gRPC service is running
-        :param port:            Port used for external gRPC API
-        :param port_internal:   Port used for internal gRPC API
-        :param certificate_file:      Certificate file for TLS
-        :param node_id:         node_id of the node, for gRPC encryption
+        :param host: Hostname or IP of node on which gRPC service is running
+        :param port: Port used for external gRPC API
+        :param port_internal: Port used for internal gRPC API
+        :param node_id: node_id of the node, for gRPC encryption
+        :param certificate_file: Certificate file for TLS
         """
         self.host = host
         self.port = port
@@ -167,11 +167,11 @@ class CasperLabsClient:
     @api
     def make_deploy(
         self,
-        from_addr: bytes = None,
-        payment: str = None,
-        session: str = None,
-        public_key: str = None,
-        session_args: bytes = None,
+        from_addr: Union[bytes, str] = None,
+        public_key: Union[Path, str] = None,
+        public_key_hex: str = None,
+        algorithm: str = ED25519_KEY_ALGORITHM,
+        payment: Union[Path, str] = None,
         payment_args: bytes = None,
         payment_amount: int = None,
         payment_hash: bytes = None,
@@ -180,6 +180,8 @@ class CasperLabsClient:
         payment_package_name: str = None,
         payment_entry_point: str = None,
         payment_version: int = None,
+        session: Union[Path, str] = None,
+        session_args: bytes = None,
         session_hash: bytes = None,
         session_name: str = None,
         session_package_hash: bytes = None,
@@ -190,43 +192,48 @@ class CasperLabsClient:
         dependencies: list = None,
         chain_name: str = None,
         transfer_args: bytes = None,
-        algorithm: str = ED25519_KEY_ALGORITHM,
     ):
         """
         Create a protobuf deploy object.
 
-        :param from_addr:      Purse address that will be used to pay for the deployment.
-        :param payment:        Path to the file with payment code.
-        :param session:        Path to the file with session code.
-        :param public_key:     Path to a file with public key (Ed25519)
-        :param private_key:    Path to a file with private key (Ed25519)
-        :param session_args:   List of ABI encoded arguments of session contract
-        :param payment_args:   List of ABI encoded arguments of payment contract
-        :param payment_amount: Amount to be used with standard payment
-        :param session_hash:   Hash of the stored contract to be called in the
-                               session; base16 encoded.
-        :param session_name:   Name of the stored contract (associated with the
-                               executing account) to be called in the session.
-        :param payment_hash:   Hash of the stored contract to be called in the
-                               payment; base16 encoded.
-        :param payment_name:   Name of the stored contract (associated with the
-                               executing account) to be called in the payment.
-        :param ttl_millis:     Time to live. Time (in milliseconds) that the
-                               deploy will remain valid for.
-        :param dependencies:   List of deploy hashes (base16 encoded) which
-                               must be executed before this deploy.
-        :param chain_name:     Name of the chain to optionally restrict the
-                               deploy from being accidentally included anywhere else.
-        :param algorithm:      Algorithm used for generating keys, defaults to ed25519
-        :return:               deploy object
+        :param from_addr: Account hash to use for deployment, generated from private_key or private_key_hex if omitted.
+                          Default payment will use the main purse of this account, unless custom payment is provided.
+        :param public_key: Path to a file with public key. Assumed to be ed25519 unless algorithm is given.
+        :param public_key_hex: Public key (base16/hex encoded). Assumed to be ed25519 unless algorithm is given.
+        :param algorithm: Algorithm used for generating keys, defaults to ed25519. See consts.SUPPORTED_KEY_ALGORITHMS
+        :param payment: Path to the file with payment code as compiled wasm.
+        :param payment_args: List of encoded arguments of payment contract
+        :param payment_amount: Amount to be used with standard payment. Will pull from main purse.
+        :param payment_hash: Hash (base16/hex encoded) of the stored contract to be called for payment.
+        :param payment_name: Name of the stored contract to be called for payment.
+        :param payment_package_hash Hash of the package to be called in the payment.
+        :param payment_package_name Name of the package to be called in the payment.
+        :param payment_entry_point: Name of Entrypoint in contract or package to call.
+                                    Defaults to `call` if not given.
+        :param payment_version: Version of the payment contract or package to use, defaults to latest if omitted
+        :param session: Path to the file with session code as compiled wasm.
+        :param session_args: List of encoded arguments of session contract
+        :param session_hash: Hash (base16/hex encoded) of the stored contract (associated with the executing account)
+                             to be called in the session.
+        :param session_name: Name of the stored contract (associated with the executing account) to be called in the
+                             session.
+        :param session_package_hash Hash of the package to be called in the session.
+        :param session_package_name Name of the package to be called in the session.
+        :param session_entry_point: Name of Entrypoint in contract to call. Defaults to `call` if not given.
+        :param session_version: Version of the session contract or package to use, defaults to latest if omitted
+        :param ttl_millis: Time to live. Time (in milliseconds) that the deploy will remain valid for.
+        :param dependencies: List of deploy hashes (hex/base16 encoded) which must be executed before this deploy.
+        :param chain_name: Name of the chain to optionally restrict the deploy from being accidentally included anywhere else.
+        :param transfer_args: Should not be used, call transfer method instead.
+        :return: protobuf deploy object which must be signed before sending
         """
         deploy_data = DeployData.from_args(
             dict(
                 from_addr=from_addr,
-                payment=payment,
-                session=session,
                 public_key=public_key,
-                session_args=session_args,
+                public_key_hex=public_key_hex,
+                algorithm=algorithm,
+                payment=payment,
                 payment_args=payment_args,
                 payment_amount=payment_amount,
                 payment_hash=payment_hash,
@@ -235,6 +242,8 @@ class CasperLabsClient:
                 payment_package_name=payment_package_name,
                 payment_entry_point=payment_entry_point,
                 payment_version=payment_version,
+                session=session,
+                session_args=session_args,
                 session_hash=session_hash,
                 session_name=session_name,
                 session_package_hash=session_package_hash,
@@ -245,7 +254,6 @@ class CasperLabsClient:
                 dependencies=dependencies,
                 chain_name=chain_name,
                 transfer_args=transfer_args,
-                algorithm=algorithm,
             )
         )
         return deploy_data.make_protobuf()
@@ -254,30 +262,40 @@ class CasperLabsClient:
     def sign_deploy(
         self,
         private_key_pem_file: Union[str, Path] = None,
+        private_key_hex: str = None,
         algorithm: str = ED25519_KEY_ALGORITHM,
         key_holder=None,
         deploy: bytes = None,
         deploy_file: Union[str, Path] = None,
     ):
         """
-        Sign a deploy with the given keys.  Source of deploy may be deploy object or file containing deploy.
+        Sign a deploy with the given key.  Source of deploy may be deploy object or file containing deploy.
+        Must provide one of the private key values or a key_holder object.
+        Must provide one of the deploy values.
 
-        :param private_key_pem_file:  File containing Private key
-        :param algorithm:             Algorithm used for key pair, see consts.SUPPORTED_KEY_ALGORITHMS
-        :param key_holder:            KeyHolder object as alternative to pem file and algorithm
-        :param deploy:                Deploy as object
-        :param deploy_file:           File containing deploy
+        :param private_key_pem_file: File containing Private key
+        :param private_key_hex: Private key in hex
+        :param algorithm: Algorithm used for generating keys, defaults to ed25519. See consts.SUPPORTED_KEY_ALGORITHMS
+        :param key_holder: KeyHolder object as alternative to pem file and algorithm
+        :param deploy: Deploy as object
+        :param deploy_file: File containing deploy
+
         :return: signed deploy object
         """
         if deploy is None:
             if deploy_file is None:
                 raise ValueError("Must have either `deploy` or `deploy_file`")
             deploy = io.read_deploy_file(deploy_file)
-        if not (private_key_pem_file or key_holder):
-            raise ValueError("Must have either `private_key_pem_file` or `key_holder`")
+        private_key = bytes.fromhex(private_key_hex) if private_key_hex else None
+        if not any((private_key_pem_file, private_key, key_holder)):
+            raise ValueError(
+                "Must have either `private_key_pem_file`, `private_key_hex`, or `key_holder`"
+            )
         if not key_holder:
             key_holder = key_holders.key_holder_object(
-                algorithm, private_key_pem_path=private_key_pem_file
+                algorithm,
+                private_key_pem_path=private_key_pem_file,
+                private_key=private_key,
             )
         return sign_deploy(deploy, key_holder)
 
@@ -285,11 +303,10 @@ class CasperLabsClient:
     def deploy(
         self,
         from_addr: Union[bytes, str] = None,
-        payment: str = None,
-        session: str = None,
-        private_key: str = None,
+        private_key: Union[Path, str] = None,
         private_key_hex: str = None,
-        session_args: bytes = None,
+        algorithm: str = ED25519_KEY_ALGORITHM,
+        payment: Union[Path, str] = None,
         payment_args: bytes = None,
         payment_amount: int = None,
         payment_hash: bytes = None,
@@ -298,73 +315,64 @@ class CasperLabsClient:
         payment_package_name: str = None,
         payment_entry_point: str = None,
         payment_version: int = None,
+        session: Union[Path, str] = None,
+        session_args: bytes = None,
         session_hash: bytes = None,
         session_name: str = None,
         session_package_hash: bytes = None,
         session_package_name: str = None,
         session_entry_point: str = None,
         session_version: int = None,
-        transfer_args: bytes = None,
         ttl_millis: int = 0,
         dependencies=None,
         chain_name: str = None,
-        algorithm: str = ED25519_KEY_ALGORITHM,
+        transfer_args: bytes = None,
     ) -> str:
         """
-        Deploy a smart contract source file to Casper on an existing running node.
-        The deploy will be packaged and sent as a block to the network depending
-        on the configuration of the Casper instance.
+        Create a deploy on the network.
 
-        :param from_addr:           Purse address that will be used to pay for the deployment.
-        :param gas_price:           The price of gas for this transaction in units dust/gas.
-                                    Must be positive integer.
-        :param payment:             Path to the file with payment code.
-        :param session:             Path to the file with session code.
-        :param private_key:         Path to a file with private key (if not ed25519, provide algorithm)
-        :param session_args:        List of ABI encoded arguments of session contract
-        :param payment_args:        List of ABI encoded arguments of payment contract
-        :param session_hash:        Hash of the stored contract to be called in the
-                                    session; base16 encoded.
-        :param session_name:        Name of the stored contract (associated with the
-                                    executing account) to be called in the session.
-        :param session_package_hash Hash of the package to be called in the sesson.
-        :param session_package_name Name of the package to be called in the sesson.
-        :param session_entry_point: Name of Entrypoint in contract to call.
-                                    Defaults to `call` if not given.
-        :param session_version:     Version of the session contract or package to use,
-                                    Defaults to latest versionf if not given.
-        :param payment_amount       Amount to be used for payment in the standard payment contract.
-        :param payment_hash:        Hash of the stored contract to be called in the
-                                    payment; base16 encoded.
-        :param payment_name:        Name of the stored contract (associated with the
-                                    executing account) to be called in the payment.
+        This is equivalent to performing `make_deploy`, `sign_deploy`, and `send_deploy`.
+
+        :param from_addr: Account hash to use for deployment, generated from private_key or private_key_hex if omitted.
+                          Default payment will use the main purse of this account, unless custom payment is provided.
+        :param private_key: Path to a file with private key. Assumed to be ed25519 unless algorithm is given.
+        :param private_key_hex: Private key (base16/hex encoded). Assumed to be ed25519 unless algorithm is given.
+        :param algorithm: Algorithm used for generating keys, defaults to ed25519. See consts.SUPPORTED_KEY_ALGORITHMS
+        :param payment: Path to the file with payment code as compiled wasm.
+        :param payment_args: List of encoded arguments of payment contract
+        :param payment_amount: Amount to be used with standard payment. Will pull from main purse.
+        :param payment_hash: Hash (base16/hex encoded) of the stored contract to be called for payment.
+        :param payment_name: Name of the stored contract to be called for payment.
         :param payment_package_hash Hash of the package to be called in the payment.
         :param payment_package_name Name of the package to be called in the payment.
         :param payment_entry_point: Name of Entrypoint in contract or package to call.
                                     Defaults to `call` if not given.
-        :param payment_version:     Version of the payment contract or package to use,
-                                    defaults to latest if omitted
-        :param ttl_millis:          Time to live. Time (in milliseconds) that the
-                                    deploy will remain valid for.
-        :param dependencies:        List of deploy hashes (base16 encoded) which
-                                    must be executed before this deploy.
-        :param chain_name:          Name of the chain to optionally restrict the
-                                    deploy from being accidentally included
-                                    anywhere else.
-        :param transfer_args:       Arguments to use with transfer endpoint.  Call transfer method for this.
-        :param algorithm:           Algorithm used for key, defaults to ed25519.  See consts.SUPPORTED_KEY_ALGORITHMS
-        :return:                    deploy hash in base16 format
+        :param payment_version: Version of the payment contract or package to use, defaults to latest if omitted
+        :param session: Path to the file with session code as compiled wasm.
+        :param session_args: List of encoded arguments of session contract
+        :param session_hash: Hash (base16/hex encoded) of the stored contract (associated with the executing account)
+                             to be called in the session.
+        :param session_name: Name of the stored contract (associated with the executing account) to be called in the
+                             session.
+        :param session_package_hash Hash of the package to be called in the session.
+        :param session_package_name Name of the package to be called in the session.
+        :param session_entry_point: Name of Entrypoint in contract to call. Defaults to `call` if not given.
+        :param session_version: Version of the session contract or package to use, defaults to latest if omitted
+        :param ttl_millis: Time to live. Time (in milliseconds) that the deploy will remain valid for.
+        :param dependencies: List of deploy hashes (hex/base16 encoded) which must be executed before this deploy.
+        :param chain_name: Name of the chain to optionally restrict the deploy from being accidentally included anywhere else.
+        :param transfer_args: Should not be used, call transfer method instead.
+        :return: deploy_hash (base16/hex encoded)
         """
 
         # Using from_args to get validation on build of object
         deploy_data = DeployData.from_args(
             dict(
                 from_addr=from_addr,
-                payment=payment,
-                session=session,
                 private_key=private_key,
                 private_key_hex=private_key_hex,
-                session_args=session_args,
+                algorithm=algorithm,
+                payment=payment,
                 payment_args=payment_args,
                 payment_amount=payment_amount,
                 payment_hash=payment_hash,
@@ -373,6 +381,8 @@ class CasperLabsClient:
                 payment_package_name=payment_package_name,
                 payment_entry_point=payment_entry_point,
                 payment_version=payment_version,
+                session=session,
+                session_args=session_args,
                 session_hash=session_hash,
                 session_name=session_name,
                 session_package_hash=session_package_hash,
@@ -383,7 +393,6 @@ class CasperLabsClient:
                 ttl_millis=ttl_millis,
                 dependencies=dependencies,
                 chain_name=chain_name,
-                algorithm=algorithm,
             )
         )
 
@@ -403,6 +412,9 @@ class CasperLabsClient:
         target_purse: Union[str, bytes] = None,
         source_purse: Union[str, bytes] = None,
         from_addr: Union[str, bytes] = None,
+        private_key: str = None,
+        private_key_hex: str = None,
+        algorithm: str = ED25519_KEY_ALGORITHM,
         payment: str = None,
         payment_args: bytes = None,
         payment_amount: int = None,
@@ -415,10 +427,34 @@ class CasperLabsClient:
         ttl_millis: int = 0,
         dependencies=None,
         chain_name: str = None,
-        private_key: str = None,
-        private_key_hex: str = None,
-        algorithm: str = ED25519_KEY_ALGORITHM,
-    ):
+    ) -> str:
+        """
+        Transfer between account purses.
+
+        :param amount: Amount to transfer
+        :param target_account: Target account hash (base16/hex encoded), will use main purse.
+        :param target_purse: URef of target purse (base16/hex encoded).
+        :param source_purse: URef of source purse (base16/hex encoded). If omitted, will use main purse of account.
+        :param from_addr: Account hash to use for deployment, generated from private_key or private_key_hex if omitted.
+                          Default payment will use the main purse of this account, unless custom payment is provided.
+        :param private_key: Path to a file with private key. Assumed to be ed25519 unless algorithm is given.
+        :param private_key_hex: Private key (base16/hex encoded). Assumed to be ed25519 unless algorithm is given.
+        :param algorithm: Algorithm used for generating keys, defaults to ed25519. See consts.SUPPORTED_KEY_ALGORITHMS
+        :param payment: Path to the file with payment code as compiled wasm.
+        :param payment_args: List of encoded arguments of payment contract
+        :param payment_amount: Amount to be used with standard payment. Will pull from main purse.
+        :param payment_hash: Hash (base16/hex encoded) of the stored contract to be called for payment.
+        :param payment_name: Name of the stored contract to be called for payment.
+        :param payment_package_hash Hash of the package to be called in the payment.
+        :param payment_package_name Name of the package to be called in the payment.
+        :param payment_entry_point: Name of Entrypoint in contract or package to call.
+                                    Defaults to `call` if not given.
+        :param payment_version: Version of the payment contract or package to use, defaults to latest if omitted
+        :param ttl_millis: Time to live. Time (in milliseconds) that the deploy will remain valid for.
+        :param dependencies: List of deploy hashes (hex/base16 encoded) which must be executed before this deploy.
+        :param chain_name: Name of the chain to optionally restrict the deploy from being accidentally included anywhere else.
+        :return: deploy_hash (base16/hex encoded) of transfer
+        """
         if len(list(filter(None, (target_purse, target_account)))) != 1:
             raise ValueError("must include either target_account or target_purse")
 
@@ -446,6 +482,7 @@ class CasperLabsClient:
             from_addr=from_addr,
             private_key=private_key,
             private_key_hex=private_key_hex,
+            algorithm=algorithm,
             payment=payment,
             payment_args=payment_args,
             payment_amount=payment_amount,
@@ -459,15 +496,16 @@ class CasperLabsClient:
             dependencies=dependencies,
             chain_name=chain_name,
             transfer_args=transfer_args,
-            algorithm=algorithm,
         )
 
     @api
     def send_deploy(self, deploy=None, deploy_file=None) -> str:
-        """  Sends deploy to network from either deploy object or file.
+        """
+        Sends deploy to network from either deploy protobuf object or file.
 
-        :param deploy:       Encoded deploy object.
-        :param deploy_file:  File holding deploy to send
+        :param deploy: Protobuf deploy object
+        :param deploy_file: File holding Protobuf deploy object
+        :return: deploy hash (base16/hex encoded)
         """
         if deploy is None:
             if deploy_file is None:
@@ -481,11 +519,10 @@ class CasperLabsClient:
         """
         Get slices of the DAG, going backwards, rank by rank.
 
-        :param depth:     How many of the top ranks of the DAG to show.
-        :param max_rank:  Maximum rank to go back from.
-                          0 means go from the current tip of the DAG.
+        :param depth: How many of the top ranks of the DAG to show.
+        :param max_rank: Maximum rank to go back from. 0 means go from the current tip of the DAG.
         :param full_view: Full view if True, otherwise basic.
-        :return:          Generator of block info objects.
+        :return: Generator of block info objects.
         """
         yield from self.casper_service.StreamBlockInfos_stream(
             casper.StreamBlockInfosRequest(
@@ -499,17 +536,7 @@ class CasperLabsClient:
 
     @api
     def showBlocks(self, depth: int = 1, max_rank=0, full_view=True):
-        """
-        DEPRECATED: Call `show_blocks`
-
-        Get slices of the DAG, going backwards, rank by rank.
-
-        :param depth:     How many of the top ranks of the DAG to show.
-        :param max_rank:  Maximum rank to go back from.
-                          0 means go from the current tip of the DAG.
-        :param full_view: Full view if True, otherwise basic.
-        :return:          Generator of block info objects.
-        """
+        """DEPRECATED: Call `show_blocks`"""
         warnings.warn(
             "showBlocks is deprecated and replaced with show_blocks.",
             DeprecationWarning,
@@ -520,12 +547,12 @@ class CasperLabsClient:
     @api
     def show_block(self, block_hash_base16: str, full_view=True):
         """
-                Returns object describing a block known by Casper on an existing running node.
+        Returns object describing a block on the network.
 
-                :param block_hash_base16: hash of the block to be retrieved
-                :param full_view:         full view if True, otherwise basic
-                :return:                  object representing the retrieved block
-                """
+        :param block_hash_base16: hash of the block to be retrieved
+        :param full_view: full view if True, otherwise basic
+        :return: object representing the retrieved block
+        """
         return self.casper_service.GetBlockInfo(
             casper.GetBlockInfoRequest(
                 block_hash_base16=block_hash_base16,
@@ -537,31 +564,11 @@ class CasperLabsClient:
 
     @api
     def showBlock(self, block_hash_base16: str, full_view=True):
-        """
-        DEPRECATED: call `show_block`
-
-        Returns object describing a block known by Casper on an existing running node.
-
-        :param block_hash_base16: hash of the block to be retrieved
-        :param full_view:         full view if True, otherwise basic
-        :return:                  object representing the retrieved block
-        """
+        """DEPRECATED: call `show_block`"""
         warnings.warn(
             "showBlock is deprecated and replaced with show_block.", DeprecationWarning
         )
         return self.show_block(block_hash_base16, full_view)
-
-    @api
-    def propose(self):
-        """"
-        THIS METHOD IS DEPRECATED! It will be removed soon.
-
-        Propose a block using deploys in the pool.
-
-        :return:    response object with block_hash
-        """
-        warnings.warn("propose is deprecated and will be removed.", DeprecationWarning)
-        return self.control_service.Propose(control.ProposeRequest())
 
     @api
     def visualize_dag(
@@ -573,19 +580,17 @@ class CasperLabsClient:
         delay_in_seconds=consts.VISUALIZE_DAG_STREAM_DELAY,
     ):
         """
-        Generate DAG in DOT format.
+        Visualize network dag.
 
-        :param depth:                     depth in terms of block height
-        :param out:                       output image filename, outputs to stdout if
-                                          not specified, must end with one of the png,
-                                          svg, svg_standalone, xdot, plain, plain_ext,
-                                          ps, ps2, json, json0
-        :param show_justification_lines:  if justification lines should be shown
-        :param stream:                    subscribe to changes, 'out' has to specified,
-                                          valid values are 'single-output', 'multiple-outputs'
-        :param delay_in_seconds:          delay in seconds when polling for updates (streaming)
-        :return:                          Yields generated DOT source or file name when out provided.
-                                          Generates endless stream of file names if stream is not None.
+        :param depth: Depth in terms of block height.
+        :param out: Output image filename, outputs to stdout if not specified.
+                    Must end with one of the png, svg, svg_standalone, xdot, plain, plain_ext, ps, ps2, json, json0
+        :param show_justification_lines: If justification lines should be shown.
+        :param stream: Subscribe to changes. 'out' must be specified.
+                       Valid values are 'single-output', 'multiple-outputs'
+        :param delay_in_seconds: Delay in seconds when polling for updates (streaming)
+        :return: Yields generated DOT source or file name when out provided.
+                 Generates endless stream of file names if stream is not None.
         """
         block_infos = list(self.show_blocks(depth, full_view=False))
         dot_dag_description = vdag.generate_dot(block_infos, show_justification_lines)
@@ -629,23 +634,7 @@ class CasperLabsClient:
         stream: str = None,
         delay_in_seconds=5,
     ):
-        """
-        DEPRECATED: call `visualize_dag`
-
-        Generate DAG in DOT format.
-
-        :param depth:                     depth in terms of block height
-        :param out:                       output image filename, outputs to stdout if
-                                          not specified, must end with one of the png,
-                                          svg, svg_standalone, xdot, plain, plain_ext,
-                                          ps, ps2, json, json0
-        :param show_justification_lines:  if justification lines should be shown
-        :param stream:                    subscribe to changes, 'out' has to specified,
-                                          valid values are 'single-output', 'multiple-outputs'
-        :param delay_in_seconds:          delay in seconds when polling for updates (streaming)
-        :return:                          Yields generated DOT source or file name when out provided.
-                                          Generates endless stream of file names if stream is not None.
-        """
+        """DEPRECATED: call `visualize_dag`"""
         warnings.warn(
             "visualizeDag is deprecated and replaced with visualize_dag.",
             DeprecationWarning,
@@ -660,14 +649,13 @@ class CasperLabsClient:
         """
         Query a value in the global state.
 
-        :param block_hash:        Hash of the block to query the state of
-        :param key:               Base16 encoding of the base key
-        :param path:              Path to the value to query. Must be of the form
-                                  'key1/key2/.../keyn'
-        :param key_type:          Type of base key. Must be one of 'hash', 'uref', 'address' or 'local'.
-                                  For 'local' key type, 'key' value format is {seed}:{rest},
-                                  where both parts are hex encoded."
-        :return:                  QueryStateResponse object
+        :param block_hash: Hash of the block (base16/hex encoding) of which to query.
+        :param key: Base key (base16/hex encoded).
+        :param path: Path to the value to query. Must be of the form 'key1/key2/.../key[n]'
+        :param key_type: Type of base key. Must be one of 'hash', 'uref', 'address' or 'local'.
+                         For 'local' key type, 'key' value format is {seed}:{rest},
+                         where both parts are base16/hex encoded.
+        :return: QueryStateResponse object
         """
         q = casper.StateQuery(key_variant=key_variant(key_type), key_base16=key)
         q.path_segments.extend([name for name in path.split("/") if name])
@@ -677,20 +665,7 @@ class CasperLabsClient:
 
     @api
     def queryState(self, blockHash: str, key: str, path: str, keyType: str):
-        """
-        DEPRECATED: call `query_state`
-
-        Query a value in the global state.
-
-        :param blockHash:         Hash of the block to query the state of
-        :param key:               Base16 encoding of the base key
-        :param path:              Path to the value to query. Must be of the form
-                                  'key1/key2/.../keyn'
-        :param keyType:           Type of base key. Must be one of 'hash', 'uref', 'address' or 'local'.
-                                  For 'local' key type, 'key' value format is {seed}:{rest},
-                                  where both parts are hex encoded."
-        :return:                  QueryStateResponse object
-        """
+        """DEPRECATED: call `query_state`"""
         warnings.warn(
             "queryState is deprecated and replaced with query_state.",
             DeprecationWarning,
@@ -704,17 +679,20 @@ class CasperLabsClient:
         algorithm: str = ED25519_KEY_ALGORITHM,
         filename_prefix: str = consts.DEFAULT_KEY_FILENAME_PREFIX,
     ) -> None:
-        """ Generates account keys into existing directory.
-            Existing files in directory will be overwritten
+        """
+        Generates account keys into existing directory.
+        Existing files in directory will be overwritten.
 
-        :param directory:       existing output directory
-        :param algorithm:       Algorithm to generate keys. Default is ed25519.
-        :param filename_prefix: Prefix to use for file, default is 'account'
+        :param directory: output directory, must exist
+        :param algorithm: Algorithm used for generating keys, defaults to ed25519. See consts.SUPPORTED_KEY_ALGORITHMS
+        :param filename_prefix: Prefix to use for files, default is 'account'
+        :return: None
 
         Generated files:
-           {filename_prefix}-hash         # Hash of public key to use in the system as hex
-           {filename_prefix}-private.pem  # private key
-           {filename_prefix}-public.pem   # public key"""
+           {filename_prefix}-id-hex       # Hash of public key to use in the system (base16/hex encoded)
+           {filename_prefix}-private.pem  # private key pem file
+           {filename_prefix}-public.pem   # public key pen file
+        """
         # TODO: Should we do pk and id to match keygen?
         directory = Path(directory).resolve()
         key_holder_generator = key_holders.class_from_algorithm(algorithm)
@@ -728,18 +706,20 @@ class CasperLabsClient:
         io.write_file(hash_path, account_hash.hex())
 
     @api
-    def balance(self, address: str, block_hash: str):
-        """ Return balance of the main purse of an account
+    def balance(self, address: str, block_hash: str) -> int:
+        """
+        Return balance of the main purse of an account
 
-        :param address:    Public key address of account.
+        :param address: Public key hash address of account.
         :param block_hash: Hash of block from which to return balance.
+        :return: purse balance as int
         """
         # TODO: Should add ability to get balance of other purse with URef
         value = self.query_state(block_hash, address, "", "address")
         try:
             account = value.account
         except AttributeError:
-            return InternalError(
+            raise InternalError(
                 "balance", f"Expected Account type value under {address}."
             )
 
@@ -763,11 +743,13 @@ class CasperLabsClient:
         """
         Retrieve information about a single deploy by hash.
 
-        :param deploy_hash:         Hash of deploy in base16 (hex)
-        :param full_view:           Show full view of deploy, default false
-        :param wait_for_processed:  Block return until deploy is not pending, default false
-        :param delay:               Delay between status checks while waiting
-        :param timeout_seconds:    S Time to return of wait even if deploy is pending
+        :param deploy_hash: Hash of deploy (base16/hex encoded).
+        :param full_view: Show full view of deploy, default False
+        :param wait_for_processed: Block return of method until deploy is not pending, default False.
+        :param delay: Delay between status checks while waiting, default consts.STATUS_CHECK_DELAY
+        :param timeout_seconds: Time to wait, default consts.STATUS_TIMEOUT
+                                Exception is raised if still pending when timeout occurs.
+        :return: deploy_info
         """
         start_time = time.time()
         while True:
@@ -798,11 +780,7 @@ class CasperLabsClient:
         delay: int = consts.STATUS_CHECK_DELAY,
         timeout_seconds: int = consts.STATUS_TIMEOUT,
     ):
-        """
-        DEPRECATED: call `show_deploy`
-
-        Retrieve information about a single deploy by hash.
-        """
+        """DEPRECATED: call `show_deploy`"""
         warnings.warn(
             "showDeploy is deprecated and replaced with show_deploy.",
             DeprecationWarning,
@@ -825,11 +803,7 @@ class CasperLabsClient:
 
     @api
     def showDeploys(self, block_hash_base16: str, full_view=True):
-        """
-        DEPRECATED: use `show_deploys`
-
-        Get the processed deploys within a block.
-        """
+        """DEPRECATED: use `show_deploys`"""
         warnings.warn(
             "showDeploys is deprecated and replaced with show_deploys.",
             DeprecationWarning,
@@ -849,18 +823,35 @@ class CasperLabsClient:
         deploy_processed: bool = False,
         deploy_finalized: bool = False,
         deploy_orphaned: bool = False,
-        account_public_key_hashes: list = None,
-        deploy_hashes=None,
+        account_public_key_hashes: List[str] = None,
+        deploy_hashes: List[str] = None,
         min_event_id: int = 0,
         max_event_id: int = 0,
     ):
         """
-        See StreamEventsRequest in
-            ~/CasperLabs/protobuf/io/casperlabs/node/api/casper.proto
-        for description of types of events.
+        Generator of events from a node.  Allows replay or subscription to all future events.
 
-        Note, you must subscribe to some events (pass True to some keywords other than account_public_keys or deploy_hashes)
-        otherwise this generator will block forever.
+        :param all: subscribe to all events, ignores other event values passed.
+        :param block_added: subscribe to block added event.
+        :param block_finalized: subscribe to block finalized event.
+        :param deploy_added: subscribe to deploy added event.
+        :param deploy_discarded: subscribe to deploy discarded event.
+        :param deploy_requeued: subscribe to deploy requeued event.
+        :param deploy_processed: subscribe to deploy processed event.
+        :param deploy_finalized: subscribe to deploy finalized event.
+        :param deploy_orphaned: subscribe to deploy orphaned event.
+        :param account_public_key_hashes: list of account public key hashes (hex/base16 encoded) to use as a filter.
+        :param deploy_hashes: list of deploy_hashes (hex/base16 encoded) to use as a filter.
+        :param min_event_id: Value of 0 will subscribe to future events.
+                             Non-zero values, will replay all past events from that ID, without subscribing to new.
+                             To catch up with events from the beginning, start from 1.
+        :param max_event_id: Id to stop replaying past events.
+        :return: generator
+
+        .. see also::
+            See StreamEventsRequest in
+                https://github.com/CasperLabs/CasperLabs/protobuf/io/casperlabs/node/api/casper.proto
+            for description of types of events.
         """
         if not any(
             (
@@ -918,7 +909,8 @@ class CasperLabsClient:
     @staticmethod
     @api
     def validator_keygen(directory: Union[Path, str]) -> None:
-        """Generate validator and node keys.
+        """
+        Generate validator and node keys.
 
         :param directory: Directory in which to create files. Must exist.
 
@@ -932,7 +924,8 @@ class CasperLabsClient:
                                  # derived from validator.public.pem
            validator-id-hex      # validator ID in hex, derived from validator.public.pem
            validator-private.pem # ed25519 private key
-           validator-public.pem  # ed25519 public key"""
+           validator-public.pem  # ed25519 public key
+        """
         directory = Path(directory)
         if not directory.exists():
             raise ValueError(f"Destination directory: {directory} does not exists.")
@@ -1010,7 +1003,7 @@ class CasperLabsClient:
     ) -> bytes:
         """ Create account hash based on algorithm and public key or public_key_path
 
-        :param algorithm:           Algorithm used for key generation. See consts.SUPPORTED_KEY_ALGORITHMS
+        :param algorithm: Algorithm used for generating keys, defaults to ed25519. See consts.SUPPORTED_KEY_ALGORITHMS
         :param public_key:          Public Key as bytes
         :param public_key_pem_path: File path to public_key pem file
         """

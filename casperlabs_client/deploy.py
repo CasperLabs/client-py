@@ -63,7 +63,7 @@ class DeployData:
         public_key = bytes.fromhex(public_key_hex) if public_key_hex else None
 
         public_key_pem_path = args.get("public_key")
-        if private_key_pem_path or public_key_pem_path:
+        try:
             key_holder = key_holders.key_holder_object(
                 algorithm=algorithm,
                 private_key_pem_path=private_key_pem_path,
@@ -71,7 +71,7 @@ class DeployData:
                 private_key=private_key,
                 public_key=public_key,
             )
-        else:
+        except ValueError:
             key_holder = None
 
         if not from_addr:
