@@ -7,5 +7,6 @@ cd ${DIR}
 
 rm -rf dist/*
 
-pipenv sync
+# Does same as sync, but aborts if Pipfile and Pipfile.lock are not in sync.
+pipenv install --deploy
 pipenv run python setup.py sdist
