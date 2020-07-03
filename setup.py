@@ -143,11 +143,11 @@ def run_codegen():
         [(r"(import .*_pb2)", r"from . \1")],
         glob(f"{PACKAGE_DIR}/*pb2*py"),
     )
-    modify_files(
-        "Patch generated Python gRPC modules (for asyncio)",
-        [(r"(import .*_pb2)", r"from . \1")],
-        [fn for fn in glob(f"{PACKAGE_DIR}/*_grpc[.]py") if "_pb2_" not in fn],
-    )
+    # modify_files(
+    #     "Patch generated Python gRPC modules (for asyncio)",
+    #     [(r"(import .*_pb2)", r"from . \1")],
+    #     [fn for fn in glob(f"{PACKAGE_DIR}/*_grpc[.]py") if "_pb2_" not in fn],
+    # )
 
 
 def prepare_sdist():
