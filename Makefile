@@ -56,9 +56,6 @@ clean-test: ## remove test and coverage artifacts
 	rm -f .coverage
 	rm -fr htmlcov/
 
-lint: .make/pipenv ## check style with flake
-	pipenv run flake8 casperlabs_client tests
-
 test: .make/pipenv ## run tests quickly with the default Python
 	pipenv run pytest tests
 
