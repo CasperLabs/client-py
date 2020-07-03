@@ -19,7 +19,7 @@ Scala CLI `casperlabs-client`. It supports the same commands and options.
 
 ## Installation
 
-`casperlabs-client` is a Python 3.6+ module, it does not support Python 2.7.
+`casperlabs-client` is a Python 3.7+ module, it does not support Python 2.7.
 
 Note: we highly recommend using
 [pipenv](https://github.com/pypa/pipenv)
@@ -64,7 +64,7 @@ pip install casperlabs-client
 ### Windows 10
 
 To install `casperlabs-client` on Windows 10 you need to install latest Python 3.7,
-it is curently not possible to install it on Python 3.8 due to
+it is currently not possible to install it on Python 3.8 due to
 https://github.com/grpc/grpc/issues/20831
 
 It is recommended to install Python from the python.org website:

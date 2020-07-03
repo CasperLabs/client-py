@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-docker pull casperlabs/execution-engine:dev
-docker pull casperlabs/node:dev
-docker pull casperlabs/key-generator:dev
+TAG=${CL_VERSION:-"dev"}
+docker pull casperlabs/execution-engine:"$TAG"
+docker pull casperlabs/node:"$TAG"
+docker pull casperlabs/key-generator:"$TAG"
 
-export CL_VERSION=dev
+export CL_VERSION="$TAG"
 
 # Stand up highway network
 cd ../../CasperLabs/hack/docker || exit
