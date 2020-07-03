@@ -43,6 +43,8 @@ steps:
   <<: *buildenv
   commands:
   - "make test-all"
+  depends_on:
+    - build-python-client
 
 - name: test-pypi-publish
   image: tvasile1012/pypi:latest
