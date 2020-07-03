@@ -20,6 +20,7 @@ ecdsa = "==0.15"
 flake8 = "*"
 protobuf = "==3.12.2"
 pycryptodome = "==3.9.4"
+coverage = "*"
 
 [requires]
 python_version = "3.7"

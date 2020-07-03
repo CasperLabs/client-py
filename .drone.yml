@@ -35,17 +35,14 @@ steps:
 - name: build-python-client
   <<: *buildenv
   commands:
-  - "./build.sh"
+  - "make build"
   depends_on:
   - update-test-version
 
 - name: test-python-client
   <<: *buildenv
   commands:
-  - "pipenv sync"
-  - "pipenv run tox"
-  depends_on:
-  - build-python-client
+  - "make test-all"
 
 - name: test-pypi-publish
   image: tvasile1012/pypi:latest
@@ -86,7 +83,7 @@ steps:
 - name: build-python-client-tag
   <<: *buildenv
   commands:
-  - "./build.sh"
+  - "make build"
 
 - name: pypi-publish-tag
   image: tvasile1012/pypi:latest
