@@ -26,7 +26,7 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test clean-make  ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-make  ## remove all make, build, test, coverage and Python artifacts
 
 .make:
 	mkdir .make
@@ -35,7 +35,7 @@ clean: clean-build clean-pyc clean-test clean-make  ## remove all build, test, c
 	pipenv install --deploy
 	touch .make/pipenv
 
-clean-make:
+clean-make:  ## remove make flags that short circuit steps.
 	rm -rf .make
 
 clean-build: ## remove build artifacts
@@ -68,7 +68,6 @@ test-all: .make/pipenv ## run tests on every Python version with tox
 coverage-base: .make/pipenv
 	pipenv run coverage run --source casperlabs_client -m pytest tests
 
-
 coverage: coverage-base ## check code coverage quickly with the default Python
 	pipenv run coverage report -m
 
@@ -76,7 +75,7 @@ coverage-html: coverage-base  ## check code coverage with html display
 	pipenv run coverage html
 	$(BROWSER) htmlcov/index.html
 
-build: .make/pipenv clean-build ## builds source and wheel package
+build: .make/pipenv clean-build ## builds source package
 	pipenv run python setup.py sdist
 
 develop: .make/pipenv ## install the package into pipenv for development
@@ -85,5 +84,11 @@ develop: .make/pipenv ## install the package into pipenv for development
 install: build  ## Install to local environment with pip
 	pip install dist/casperlabs_client*
 
-docker:
+docker:  ## Build local docker image to casperlabs/client:latest
 	docker build -t casperlabs/client:latest .
+
+pre-commit:  ## Run the pre-commit scripts
+	pipenv run pre-commit run
+
+pre-commit-all:  ## Run the pre-commit scripts as if all files are staged
+	pipenv run pre-commit run --all-files

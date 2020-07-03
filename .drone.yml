@@ -35,14 +35,16 @@ steps:
 - name: build-python-client
   <<: *buildenv
   commands:
-  - "make build"
+    - "make clean"
+    - "make build"
   depends_on:
   - update-test-version
 
 - name: test-python-client
   <<: *buildenv
   commands:
-  - "make test-all"
+    - "make clean-make"
+    - "make test-all"
   depends_on:
     - build-python-client
 
