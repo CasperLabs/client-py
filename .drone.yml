@@ -87,7 +87,8 @@ steps:
 - name: build-python-client-tag
   <<: *buildenv
   commands:
-  - "make build"
+    - "make clean"
+    - "make build"
 
 - name: pypi-publish-tag
   image: tvasile1012/pypi:latest
