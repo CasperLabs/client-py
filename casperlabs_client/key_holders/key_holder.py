@@ -4,8 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Union
 from pathlib import Path
 
-from casperlabs_client import crypto, consts
-from casperlabs_client.io import write_binary_file
+from casperlabs_client import crypto, consts, io
 
 
 class KeyHolder(ABC):
@@ -54,6 +53,16 @@ class KeyHolder(ABC):
             self._private_key = self._private_key_from_private_key_pem()
         return self._private_key
 
+    @property
+    def private_key_hex(self) -> str:
+        """ Returns or generates private key in hex encoding from other internal fields """
+        return self.private_key.hex()
+
+    @property
+    def private_key_base64(self) -> str:
+        """ Returns or generates private key in base64 encoding from other internal fields """
+        return base64.b64encode(self.private_key).decode("UTF-8")
+
     @abstractmethod
     def _private_key_from_private_key_pem(self) -> bytes:
         pass
@@ -81,6 +90,16 @@ class KeyHolder(ABC):
                 raise ValueError("No values given to derive public key")
         return self._public_key
 
+    @property
+    def public_key_hex(self) -> str:
+        """ Returns or generates public key in hex encoding from other internal fields """
+        return self.public_key.hex()
+
+    @property
+    def public_key_base64(self) -> str:
+        """ Returns or generates public key in base64 encoding from other internal fields """
+        return base64.b64encode(self.public_key).decode("UTF-8")
+
     @abstractmethod
     def _public_key_from_public_key_pem(self):
         pass
@@ -104,13 +123,42 @@ class KeyHolder(ABC):
             Path(save_directory)
             / f"{filename_prefix}{consts.PRIVATE_KEY_FILENAME_SUFFIX}"
         )
-        write_binary_file(private_path, self.private_key_pem)
+        io.write_binary_file(private_path, self.private_key_pem)
 
         public_path = (
             Path(save_directory)
             / f"{filename_prefix}{consts.PUBLIC_KEY_FILENAME_SUFFIX}"
         )
-        write_binary_file(public_path, self.public_key_pem)
+        io.write_binary_file(public_path, self.public_key_pem)
+
+    def save_hex_base64_files(
+        self,
+        directory: Union[Path, str],
+        filename_prefix: str = consts.DEFAULT_KEY_FILENAME_PREFIX,
+    ) -> None:
+        """
+        Saves out hex/base16 and base64 versions of account hash and public key.
+
+        :param directory: Directory in which to create files. Must exist.
+        :param filename_prefix: Prefix to use in files. Defaults to consts.DEFAULT_KEY_FILENAME_PREFIX
+
+        Generated files:
+            {filename_prefix}-id-hex  # account hash in hex/base16 format.
+            {filename_prefix}-id      # account hash in base64 format.
+            {filename_prefix}-pk-hex  # account public key in hex/base16 format.
+            {filename_prefix}-pk      # account public key in base64 format.
+        """
+        pairs = [
+            (consts.ACCOUNT_PRIVATE_KEY_HEX_FILENAME_SUFFIX, self.public_key_hex),
+            (
+                consts.ACCOUNT_PRIVATE_KEY_BASE64_FILENAME_SUFFIX,
+                self.private_key_base64,
+            ),
+            (consts.ACCOUNT_HASH_HEX_FILENAME_SUFFIX, self.account_hash_hex),
+            (consts.ACCOUNT_HASH_BASE64_FILENAME_SUFFIX, self.account_hash_base64),
+        ]
+        for suffix, value in pairs:
+            io.write_file(directory / f"{filename_prefix}{suffix}", value)
 
     @staticmethod
     @abstractmethod
