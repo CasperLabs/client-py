@@ -5,7 +5,7 @@ USER root
 WORKDIR /opt/docker
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends g++ protobuf-compiler \
+    && apt-get install -y --no-install-recommends g++ protobuf-compiler make \
     && apt-get clean
 
 ENTRYPOINT ["casperlabs_client"]
@@ -19,5 +19,5 @@ COPY . /src
 
 RUN cd /src \
     && python setup.py sdist \
-    && ./install.sh \
+    && python -m pip install dist/casperlabs_client* \
     && pytest tests
