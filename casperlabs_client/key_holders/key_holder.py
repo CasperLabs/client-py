@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import base64
 from abc import ABC, abstractmethod
 from typing import Union
 from pathlib import Path
@@ -101,13 +102,13 @@ class KeyHolder(ABC):
         """
         private_path = (
             Path(save_directory)
-            / f"{filename_prefix}{consts.ACCOUNT_PRIVATE_KEY_FILENAME_SUFFIX}"
+            / f"{filename_prefix}{consts.PRIVATE_KEY_FILENAME_SUFFIX}"
         )
         write_binary_file(private_path, self.private_key_pem)
 
         public_path = (
             Path(save_directory)
-            / f"{filename_prefix}{consts.ACCOUNT_PUBLIC_KEY_FILENAME_SUFFIX}"
+            / f"{filename_prefix}{consts.PUBLIC_KEY_FILENAME_SUFFIX}"
         )
         write_binary_file(public_path, self.public_key_pem)
 
@@ -147,3 +148,8 @@ class KeyHolder(ABC):
     def account_hash_hex(self) -> str:
         """ Generate hash of public key and key algorithm for use as primary identifier in the system as hex str """
         return self.account_hash.hex()
+
+    @property
+    def account_hash_base64(self) -> str:
+        """ Generate hash of public key and key algorithm for use as primary identifier in the system as base64 str """
+        return base64.b64encode(self.account_hash).decode("UTF-8")
