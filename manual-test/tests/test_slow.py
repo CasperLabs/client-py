@@ -6,7 +6,6 @@ from casperlabs_client.key_holders import class_from_algorithm
 from .common import WASM_DIRECTORY
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize("algorithm", SUPPORTED_KEY_ALGORITHMS)
 def test_call_do_nothing_with_all_supported_key_type_accounts(
     casperlabs_client, faucet_funded_accounts, algorithm
@@ -33,7 +32,6 @@ def test_call_do_nothing_with_all_supported_key_type_accounts(
     assert len(result.processing_results) > 0, "No block_info returned"
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize("algorithm", SUPPORTED_KEY_ALGORITHMS)
 def test_transfer_creates_new_account_with_all_supported_key_types(
     casperlabs_client, faucet_funded_accounts, algorithm
