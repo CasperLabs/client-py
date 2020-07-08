@@ -674,7 +674,7 @@ class CasperLabsClient:
     @api
     def keygen(
         self,
-        directory: str,
+        directory: Union[Path, str],
         algorithm: str = ED25519_KEY_ALGORITHM,
         filename_prefix: str = consts.DEFAULT_KEY_FILENAME_PREFIX,
     ) -> None:
@@ -690,24 +690,19 @@ class CasperLabsClient:
         Generated files:
            {filename_prefix}-id           # Hash of public key to use in the system (base64 encoded)
            {filename_prefix}-id-hex       # Hash of public key to use in the system (base16/hex encoded)
+           {filename_prefix}-pk           # Public key (base64 encoded)
+           {filename_prefix}-pk-hex       # Public key (base16/hex encoded)
            {filename_prefix}-private.pem  # private key pem file
            {filename_prefix}-public.pem   # public key pen file
         """
-        # TODO: Should we do pk and id to match keygen?
-        directory = Path(directory).resolve()
+        directory = Path(directory)
+        if not directory.exists():
+            raise ValueError(f"Destination directory: {directory} does not exists.")
+
         key_holder_generator = key_holders.class_from_algorithm(algorithm)
         key_holder = key_holder_generator.generate()
         key_holder.save_pem_files(directory, filename_prefix)
-
-        account_hash_hex_path = (
-            directory / f"{filename_prefix}{consts.ACCOUNT_HASH_HEX_FILENAME_SUFFIX}"
-        )
-        io.write_file(account_hash_hex_path, key_holder.account_hash_hex)
-
-        account_hash_base64_path = (
-            directory / f"{filename_prefix}{consts.ACCOUNT_HASH_BASE64_FILENAME_SUFFIX}"
-        )
-        io.write_file(account_hash_base64_path, key_holder.account_hash_base64)
+        key_holder.save_hex_base64_files(directory, filename_prefix)
 
     @api
     def balance(self, address: str, block_hash: str) -> int:
@@ -924,9 +919,10 @@ class CasperLabsClient:
            node.certificate.pem  # TLS certificate used for node-to-node interaction encryption
                                  # derived from node.key.pem
            node.key.pem          # secp256r1 private key
-           validator-id          # validator ID in Base64 format; can be used in accounts.csv
-                                 # derived from validator.public.pem
-           validator-id-hex      # validator ID in hex, derived from validator.public.pem
+           validator-pk          # validator public key in base64 format
+           validator-pk-hex      # validator public key in hex/base16
+           validator-id          # validator account hash in base64 format
+           validator-id-hex      # validator account hash in hex/base16
            validator-private.pem # ed25519 private key
            validator-public.pem  # ed25519 public key
         """
@@ -940,12 +936,7 @@ class CasperLabsClient:
 
         key_pair = key_holders.ED25519Key.generate()
         key_pair.save_pem_files(directory, consts.VALIDATOR_FILENAME_PREFIX)
-
-        account_hash_hex_path = directory / f"{consts.VALIDATOR_ID_HEX_FILENAME}"
-        io.write_file(account_hash_hex_path, key_pair.account_hash_hex)
-
-        account_hash_base64_path = directory / f"{consts.VALIDATOR_ID_FILENAME}"
-        io.write_file(account_hash_base64_path, key_pair.account_hash_base64)
+        key_pair.save_hex_base64_files(directory, consts.VALIDATOR_FILENAME_PREFIX)
 
         private_key, public_key = crypto.generate_secp256r1_key_pair()
         node_cert, key_pem = crypto.generate_node_certificates(private_key, public_key)
