@@ -30,10 +30,22 @@ class ED25519Key(KeyHolder):
         )
 
     @staticmethod
+    def _parse_pem_data_line(pem_file_data: bytes) -> bytes:
+        """
+        :param pem_file_data: data from pem file as bytes
+        :return: raw bytes from the data line(s)
+        """
+        for line in pem_file_data.split(b"\n"):
+            if not line.startswith(b"-----"):
+                # ed25519 DER encoding is never longer than one line of base64.
+                return line
+
+    @staticmethod
     def _parse_pem_data(pem_file_data: bytes):
-        raw_data = KeyHolder._parse_pem_data_line(pem_file_data)
+        raw_data = ED25519Key._parse_pem_data_line(pem_file_data)
         data = base64.b64decode(raw_data)
-        # TODO: Where does this magic come from?
+        # PKCS8 encoding is longer than 32, but has public and private keys as last 32 bytes.
+        # This also allows for a PEM format of ONLY the key (% 32 = 0). I don't know if we should allow this.
         if len(data) % 32 == 0:
             return data[:32]
         else:

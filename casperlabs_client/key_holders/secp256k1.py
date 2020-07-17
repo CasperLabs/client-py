@@ -8,36 +8,6 @@ from casperlabs_client.io import read_binary_file
 from .key_holder import KeyHolder
 
 
-class NoChangeHasher:
-    def __init__(self, data=None):
-        if data is None:
-            self.data = b""
-        else:
-            self.data = data
-
-    def update(self, data):
-        self.data += data
-        return self
-
-    def copy(self):
-        return NoChangeHasher(self.data)
-
-    def name(self):
-        return "bob"
-
-    def __call__(self, data=None):
-        if data:
-            self.data = data
-        return self
-
-    def digest(self):
-        return self.data
-
-    @property
-    def digest_size(self) -> int:
-        return len(self.data)
-
-
 class SECP256K1Key(KeyHolder):
     """
     Class for loading, generating and handling public/private keys using secp256k1 algorithm

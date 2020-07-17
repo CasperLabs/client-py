@@ -174,16 +174,6 @@ class KeyHolder(ABC):
     def sign(self, data: bytes) -> bytes:
         pass
 
-    @staticmethod
-    def _parse_pem_data_line(pem_file_data: bytes):
-        """
-        :param pem_file_data: data from pem file as bytes
-        :return: raw bytes from the data line
-        """
-        for line in pem_file_data.split(b"\n"):
-            if not line.startswith(b"-----"):
-                return line
-
     @property
     def account_hash(self) -> bytes:
         """ Generate hash of public key and key algorithm for use as primary identifier in the system as bytes """
