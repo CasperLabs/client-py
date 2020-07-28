@@ -9,17 +9,11 @@
 Note, the name of the package available on PyPi is `casperlabs-client` (with hyphen),
 but the name of the library as well as the CLI is written with underscore: `casperlabs_client`.
 
-## Installation
+## Linux Installation
+
+These instructions are for UBuntu 18.04 (or greater)
 
 `casperlabs-client` is a Python 3.7+ module, it does not support Python 2.7.
-
-Note: we highly recommend using
-[pipenv](https://github.com/pypa/pipenv)
-or
-[virtualenv](https://virtualenv.pypa.io/en/latest/).
-
-### Linux
-
 Due to the issue
 ["pip install cryptography segmentation fault (SIGSEGV)"](https://github.com/pyca/cryptography/issues/3815),
 which affects popular Linux distributions like Ubuntu,
@@ -27,6 +21,18 @@ we recommend installing `casperlabs-client` in an isolated Python 3 environment 
 [pipenv](https://github.com/pypa/pipenv)
 or
 [virtualenv](https://virtualenv.pypa.io/en/latest/).
+
+These steps should help you set up your Python environment for the client.
+
+```
+sudo apt install gcc
+sudo apt install python3.7
+sudo apt-get install python3.7-dev
+virtualenv -p python3.7 env
+source env/bin/activate
+```
+
+### Install the Client
 
 After activating a pipenv or virtualenv environment you can install the `casperlabs_client` package with
 
@@ -78,7 +84,7 @@ typing the following on the command line:
 C:\Users\alice>python -m pip install casperlabs-client
 ```
 
-## Command line interface
+## Using the Client Command line interface (CLI)
 
 The package `casperlabs-client` includes command line interface (CLI)
 script called `casperlabs_client`.
