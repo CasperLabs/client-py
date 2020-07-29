@@ -33,6 +33,14 @@ sudo apt-get install python3.8-dev
 virtualenv -p python3.8 env
 ```
 
+### Activate the environment
+
+Each time you use the virtual environment you need to activate it.  This is done with a script inside the `env` directory you created.
+
+`source env/bin/activate`
+
+You will need to do this for the install below, but also each time you open a new terminal to run the `casperlabs_client` once installed.
+
 ### Install the Client
 
 After activating the Python environment, install the `casperlabs_client` package with
