@@ -11,7 +11,9 @@ but the name of the library as well as the CLI is written with underscore: `casp
 
 ## Linux Installation
 
-These instructions are for UBuntu 18.04 (or greater)
+These instructions are for Ubuntu 18.04 and 20.04.  
+
+Note that default versions of Python you will use is different for both versions of Ubuntu.
 
 `casperlabs-client` is a Python 3.7+ module, it does not support Python 2.7.
 Due to the issue
