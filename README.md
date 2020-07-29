@@ -11,21 +11,13 @@ but the name of the library as well as the CLI is written with underscore: `casp
 
 ## Linux Installation
 
-These instructions are for Ubuntu 18.04 and 20.04.  
-
-Note that default versions of Python you will use is different for both versions of Ubuntu.
+These instructions are for Ubuntu 18.04 and 20.04.
+Note: The default versions of Python are different for both versions of Ubuntu.
+These steps are required prior to activating the Python environment every time the client is used.
 
 `casperlabs-client` is a Python 3.7+ module, it does not support Python 2.7.
-Due to the issue
-["pip install cryptography segmentation fault (SIGSEGV)"](https://github.com/pyca/cryptography/issues/3815),
-which affects popular Linux distributions like Ubuntu,
-we recommend installing `casperlabs-client` in an isolated Python 3 environment created with
-[pipenv](https://github.com/pypa/pipenv)
-or
-[virtualenv](https://virtualenv.pypa.io/en/latest/).
 
-These steps should help you set up your Python environment for the client.
-
+##### For Ubuntu 18.04 follow these steps to activate the environment:
 ```
 sudo apt install gcc
 sudo apt install python3.7
@@ -34,9 +26,17 @@ virtualenv -p python3.7 env
 source env/bin/activate
 ```
 
+##### For Ubuntu 20.04 follow these steps:
+```
+sudo apt install gcc
+sudo apt install python3.8
+sudo apt-get install python3.8-dev
+virtualenv -p python3.8 env
+```
+
 ### Install the Client
 
-After activating a pipenv or virtualenv environment you can install the `casperlabs_client` package with
+After activating the Python environment, install the `casperlabs_client` package with
 
 ```
 python -m pip install casperlabs-client
