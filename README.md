@@ -23,7 +23,6 @@ sudo apt install gcc
 sudo apt install python3.7
 sudo apt-get install python3.7-dev
 virtualenv -p python3.7 env
-source env/bin/activate
 ```
 
 ##### For Ubuntu 20.04 follow these steps:
