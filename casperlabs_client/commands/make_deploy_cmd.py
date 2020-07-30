@@ -9,19 +9,22 @@ from casperlabs_client.decorators import guarded_command
 
 NAME: str = "make-deploy"
 HELP: str = "Constructs a deploy that can be signed and sent to a node."
-OPTIONS = [
+OPTIONS = (
     [
-        ("-o", "--deploy-path"),
-        dict(
-            required=False,
-            help=(
-                "Path to the file where deploy will be saved. "
-                "Optional, if not provided the deploy will be printed to STDOUT."
+        [
+            ("-o", "--deploy-path"),
+            dict(
+                required=False,
+                help=(
+                    "Path to the file where deploy will be saved. "
+                    "Optional, if not provided the deploy will be printed to STDOUT."
+                ),
             ),
-        ),
-    ],
-    public_key_option(required=False),
-] + DEPLOY_OPTIONS
+        ]
+    ]
+    + [public_key_option(required=False)]
+    + DEPLOY_OPTIONS
+)
 
 
 @guarded_command
@@ -38,10 +41,14 @@ def method(casperlabs_client: CasperLabsClient, args: Dict):
         payment_name=args.get("payment_name"),
         payment_package_hash=args.get("payment_package_hash"),
         payment_package_name=args.get("payment_package_name"),
+        payment_entry_point=args.get("payment_entry_point"),
+        payment_version=args.get("payment_version"),
         session_hash=args.get("session_hash"),
         session_name=args.get("session_name"),
         session_package_hash=args.get("session_package_hash"),
         session_package_name=args.get("session_package_name"),
+        session_entry_point=args.get("session_entry_point"),
+        session_version=args.get("session_version"),
         ttl_millis=args.get("ttl_millis"),
         dependencies=args.get("dependencies"),
         chain_name=args.get("chain_name"),

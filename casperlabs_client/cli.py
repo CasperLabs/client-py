@@ -15,7 +15,6 @@ from casperlabs_client.commands import (
     deploy_cmd,
     keygen_cmd,
     make_deploy_cmd,
-    propose_cmd,
     stream_events_cmd,
     transfer_cmd,
     sign_deploy_cmd,
@@ -31,7 +30,7 @@ from casperlabs_client.commands import (
 )
 
 
-def cli(*arguments) -> int:
+def cli(*arguments, client=None) -> int:
     """
     Parse list of method line arguments and call appropriate method.
     """
@@ -107,19 +106,19 @@ def cli(*arguments) -> int:
             for (args, options) in argument_list:
                 command_parser.add_argument(*args, **options)
 
-        def run(self, argv):
+        def run(self, argv, client=None):
             # Using dict rather than namespace to allow dual interface with library
             args = vars(self.parser.parse_args(argv))
-            return args["function"](
-                CasperLabsClient(
+            if client is None:
+                client = CasperLabsClient(
                     args.get("host"),
                     args.get("port"),
                     args.get("port_internal"),
                     args.get("node_id"),
                     args.get("certificate_file"),
-                ),
-                args,
-            )
+                )
+
+            return args["function"](client, args,)
 
     parser = Parser()
 
@@ -129,7 +128,6 @@ def cli(*arguments) -> int:
         deploy_cmd,
         keygen_cmd,
         make_deploy_cmd,
-        propose_cmd,
         query_state_cmd,
         send_deploy_cmd,
         show_block_cmd,
@@ -145,7 +143,7 @@ def cli(*arguments) -> int:
     ):
         parser.add_command(command.NAME, command.method, command.HELP, command.OPTIONS)
 
-    return parser.run([str(a) for a in arguments])
+    return parser.run([str(a) for a in arguments], client=client)
 
 
 def main():

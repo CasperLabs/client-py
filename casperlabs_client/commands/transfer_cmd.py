@@ -68,7 +68,7 @@ def method(casperlabs_client: CasperLabsClient, args: dict):
         target_account=args.get("target_account"),
         target_purse=args.get("target_purse"),
         source_purse=args.get("source_purse"),
-        from_addr=args.get("from_addr"),
+        from_addr=args.get("from"),
         private_key=args.get("private_key"),
         ttl_millis=args.get("ttl_millis"),
         dependencies=args.get("dependencies"),
@@ -80,12 +80,13 @@ def method(casperlabs_client: CasperLabsClient, args: dict):
         payment_hash=args.get("payment_hash"),
         payment_name=args.get("payment_name"),
         payment_entry_point=args.get("payment_entry_point"),
+        payment_version=args.get("payment_version"),
         payment_package_hash=args.get("payment_package_hash"),
         payment_package_name=args.get("payment_package_name"),
     )
     print(f"Success! Deploy {deploy_hash} deployed")
     if args.get("wait_for_processed", False):
-        deploy_info = casperlabs_client.showDeploy(
+        deploy_info = casperlabs_client.show_deploy(
             deploy_hash,
             full_view=False,
             wait_for_processed=True,

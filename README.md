@@ -9,26 +9,41 @@
 Note, the name of the package available on PyPi is `casperlabs-client` (with hyphen),
 but the name of the library as well as the CLI is written with underscore: `casperlabs_client`.
 
-## Installation
+## Linux Installation
+
+These instructions are for Ubuntu 18.04 and 20.04.
+Note: The default versions of Python are different for both versions of Ubuntu.
+These steps are required prior to activating the Python environment every time the client is used.
 
 `casperlabs-client` is a Python 3.7+ module, it does not support Python 2.7.
 
-Note: we highly recommend using
-[pipenv](https://github.com/pypa/pipenv)
-or
-[virtualenv](https://virtualenv.pypa.io/en/latest/).
+##### For Ubuntu 18.04 follow these steps to activate the environment:
+```
+sudo apt install gcc
+sudo apt install python3.7
+sudo apt-get install python3.7-dev
+virtualenv -p python3.7 env
+```
 
-### Linux
+##### For Ubuntu 20.04 follow these steps:
+```
+sudo apt install gcc
+sudo apt install python3.8
+sudo apt-get install python3.8-dev
+virtualenv -p python3.8 env
+```
 
-Due to the issue
-["pip install cryptography segmentation fault (SIGSEGV)"](https://github.com/pyca/cryptography/issues/3815),
-which affects popular Linux distributions like Ubuntu,
-we recommend installing `casperlabs-client` in an isolated Python 3 environment created with
-[pipenv](https://github.com/pypa/pipenv)
-or
-[virtualenv](https://virtualenv.pypa.io/en/latest/).
+### Activate the environment
 
-After activating a pipenv or virtualenv environment you can install the `casperlabs_client` package with
+Each time you use the virtual environment you need to activate it.  This is done with a script inside the `env` directory you created.
+
+`source env/bin/activate`
+
+You will need to do this for the install below, but also each time you open a new terminal to run the `casperlabs_client` once installed.
+
+### Install the Client
+
+After activating the Python environment, install the `casperlabs_client` package with
 
 ```
 python -m pip install casperlabs-client
@@ -78,7 +93,7 @@ typing the following on the command line:
 C:\Users\alice>python -m pip install casperlabs-client
 ```
 
-## Command line interface
+## Using the Client Command line interface (CLI)
 
 The package `casperlabs-client` includes command line interface (CLI)
 script called `casperlabs_client`.
