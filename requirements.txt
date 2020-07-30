@@ -11,3 +11,6 @@ pre-commit
 ecdsa ==0.15
 flake8
 protobuf ==3.12.2
+coverage
+asn1tools
+pytest-mock
