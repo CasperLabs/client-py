@@ -90,6 +90,6 @@ def method(casperlabs_client: CasperLabsClient, args: dict):
             deploy_hash,
             full_view=False,
             wait_for_processed=True,
-            timeout_seconds=args.get("timeout-seconds", consts.STATUS_TIMEOUT),
+            timeout_seconds=args.get("timeout_seconds", consts.STATUS_TIMEOUT),
         )
         print(reformat.hexify(deploy_info))
