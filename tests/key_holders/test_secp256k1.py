@@ -93,3 +93,13 @@ def test_secp256k1_round_trip_public_key_pem():
     assert (
         result_public_key_pem == public_key_pem
     ), "public key pem after roundtrip doesn't match"
+
+
+#
+# def test_ed25519_pem_detection(account_keys):
+#     secp256k1_keys = account_keys[SECP256K1_KEY_ALGORITHM]
+#     public_algorithm = algorithm_from_pem_file(secp256k1_keys["public_pem"])
+#     private_algorithm = algorithm_from_pem_file(secp256k1_keys["private_pem"])
+#     print(public_algorithm, private_algorithm)
+#     # assert public_algorithm == ED25519_KEY_ALGORITHM
+#     # assert private_algorithm == ED25519_KEY_ALGORITHM

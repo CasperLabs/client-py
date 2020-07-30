@@ -44,7 +44,7 @@ def test_session_option_too_many_given(client, account_keys):
             public_key=private_key_pem,
             payment_amount=1000000,
             session_name="bob",
-            session_hash="asdsad",
+            session_hash="0000000000000000000000000000000000000000000000000000000000000000",
         )
     assert (
         "Must have one and only one session, session_hash, session_name, "
