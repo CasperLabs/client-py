@@ -8,6 +8,7 @@ import time
 from casperlabs_client import crypto
 from .contract import PaymentCode, SessionCode
 from .key_holders import ED25519Key, SECP256K1Key
+from .reformat import optional_base64_base16_to_bytes
 
 
 def sign_deploy(deploy, key_holder):
@@ -43,9 +44,9 @@ class DeployData:
         """
 
         # `from` isn't good for dict creation, but used from CLI, so handle both `from` and `from_addr`
-        from_addr = args.get("from", args.get("from_addr"))
-        if from_addr and not isinstance(from_addr, bytes):
-            from_addr = bytes.fromhex(from_addr)
+        from_addr = optional_base64_base16_to_bytes(
+            args.get("from", args.get("from_addr")), "from"
+        )
 
         payment_code = PaymentCode.from_args(args)
         session_code = SessionCode.from_args(args)

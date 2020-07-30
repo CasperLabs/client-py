@@ -101,3 +101,13 @@ def test_ed25519_account_hash():
     expected_account_hash = b"\t%\xa8\x12\x83\xd3\x8b\x00\x19\xd3\x8dN\x8b\x16U<\xab\xe2MQ\xd8yR\x02\xebBn\x15\xd5F`8"
     account_hash = key_holder.account_hash
     assert account_hash == expected_account_hash, "account_hash does not equal expected"
+
+
+# def test_ed25519_pem_detection(account_keys):
+#     ed25519_keys = account_keys[ED25519_KEY_ALGORITHM]
+#     public_algorithm = algorithm_from_pem_file(ed25519_keys["public_pem"])
+#     print(public_algorithm)
+#     # private_algorithm = algorithm_from_pem_file(ed25519_keys["private_pem"])
+#     # print(public_algorithm, private_algorithm)
+#     # assert public_algorithm == ED25519_KEY_ALGORITHM
+#     # assert private_algorithm == ED25519_KEY_ALGORITHM

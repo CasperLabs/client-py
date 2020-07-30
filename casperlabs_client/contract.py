@@ -7,6 +7,7 @@ from casperlabs_client.io import read_binary_file
 from . import consensus_pb2 as consensus
 
 from .abi import ABI
+from .reformat import optional_base64_base16_to_bytes
 
 
 @dataclass
@@ -140,9 +141,13 @@ class SessionCode(ContractCode):
     def from_args(args: Dict) -> "SessionCode":
         """ Creates SessionCode from CLI args """
         wasm_file_path = args.get("session")
-        contract_hash = args.get("session_hash")
+        contract_hash = optional_base64_base16_to_bytes(
+            args.get("session_hash"), "session_hash"
+        )
         contract_name = args.get("session_name")
-        package_hash = args.get("session_package_hash")
+        package_hash = optional_base64_base16_to_bytes(
+            args.get("session_package_hash"), "session_package_hash"
+        )
         package_name = args.get("session_package_name")
         entry_point = args.get("session_entry_point")
         version = args.get("session_version")
@@ -204,9 +209,13 @@ class PaymentCode(ContractCode):
     def from_args(args: Dict) -> "PaymentCode":
         wasm_file_path = args.get("payment")
         payment_amount = args.get("payment_amount")
-        contract_hash = args.get("payment_hash")
+        contract_hash = optional_base64_base16_to_bytes(
+            args.get("payment_hash"), "payment_hash"
+        )
         contract_name = args.get("payment_name")
-        package_hash = args.get("payment_package_hash")
+        package_hash = optional_base64_base16_to_bytes(
+            args.get("payment_package_hash"), "payment_package_hash"
+        )
         package_name = args.get("payment_package_name")
         entry_point = args.get("payment_entry_point")
         version = args.get("payment_version")

@@ -65,7 +65,7 @@ OPTIONS = [
 
 def _add_to_list(maybe_value) -> List:
     if maybe_value:
-        return [maybe_value]
+        return maybe_value
     else:
         return []
 

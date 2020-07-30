@@ -60,6 +60,7 @@ def account_keys(account_keys_directory):
     return algorithm_keys
 
 
+# Scoping this per call as we mock it.
 @pytest.fixture
 def client():
     return CasperLabsClient()
