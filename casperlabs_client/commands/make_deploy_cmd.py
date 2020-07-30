@@ -51,7 +51,7 @@ def method(casperlabs_client: CasperLabsClient, args: Dict):
         session_version=args.get("session_version"),
         ttl_millis=args.get("ttl_millis"),
         dependencies=args.get("dependencies"),
-        chain_name=args.get("chain-name"),
+        chain_name=args.get("chain_name"),
         algorithm=args.get("algorithm"),
     )
     data = deploy.SerializeToString()

@@ -51,6 +51,7 @@ def faucet_fund_account(casperlabs_client, account_hash_hex, amount=10000000000)
         private_key=FAUCET_PRIVATE_KEY_PEM_PATH,
         session=faucet_wasm_path,
         session_args=session_args,
+        payment_amount=1000000,
     )
     result = casperlabs_client.show_deploy(deploy_hash, wait_for_processed=True)
     assert (

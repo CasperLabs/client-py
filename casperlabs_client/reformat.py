@@ -35,11 +35,16 @@ def optional_base64_base16_to_bytes(
             )
         return value
 
-    value_bytes = base64.b64decode(value)
-    if len(value_bytes) != expected_length:
-        value_bytes = bytes.fromhex(value)
-        if len(value_bytes) != 32:
-            raise ValueError(
-                f"{field_name} in bytes has len: {len(value)}, expected len: {expected_length}"
-            )
+    try:
+        value_bytes = base64.b64decode(value)
+        if len(value_bytes) != expected_length:
+            value_bytes = bytes.fromhex(value)
+            if len(value_bytes) != 32:
+                raise ValueError(
+                    f"Unable to parse {field_name} from string to bytes with expected len: {expected_length}"
+                )
+    except Exception:
+        raise ValueError(
+            f"Unable to parse {field_name} from string to bytes with expected len: {expected_length}"
+        )
     return value_bytes
