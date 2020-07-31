@@ -1,0 +1,3 @@
+faucet
+test-payment-stored
+transfer-to-account-u512-stored
