@@ -12,8 +12,6 @@ if [[ -z "$DRONE_BUILD_NUMBER" ]]; then
 else
   # inside CI, so we are running in buildenv docker
   docker run --rm -v $DIR/wasm:/wasm -v /tmp:/tmp \
-         -p 9000:9000 \
-         -v /var/run/docker.sock:/var/run/docker.sock \
          casperlabs/buildenv:latest \
          /bin/bash -c "$(cat $DIR/internal_build_script)"
 fi
