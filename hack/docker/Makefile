@@ -54,7 +54,7 @@ node-%: .casperlabs
 
 # Start node.
 # Only make `highway.env` when the first node is started, so the era epoch doesn't become stale.
-node-%/up: node-% .make/docker/network maybe-reset-highway-env
+node-%/up: node-% maybe-reset-highway-env
 	@# Go into the directory to pick up values from .env
 	if [ "$(CL_VERSION)" != "latest" ]; then \
 		cd node-$* && docker-compose pull; \
