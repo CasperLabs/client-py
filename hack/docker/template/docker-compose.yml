@@ -37,6 +37,9 @@ services:
       - $PWD/../template/start-node.sh:/opt/docker/start-node.sh
       # Make logs available in JSON, stack traces are only available there.
       - $PWD/logs:/var/logs/casperlabs
+      # For running from within another docker container
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
     environment:
       HOME: /root
       BOOTSTRAP_HOSTNAMES: ${BOOTSTRAP_HOSTNAMES}
