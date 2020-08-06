@@ -22,10 +22,10 @@ shift
 
 TAG=${CL_VERSION:-"latest"}
 docker pull casperlabs/key-generator:"$TAG" &> /dev/null
-docker run --rm -it --user $(id -u):$(id -g) -v "$OUTPUT_DIR":/keys casperlabs/key-generator:"$TAG" /keys || {
+docker run --rm --user $(id -u):$(id -g) -v "$OUTPUT_DIR":/keys casperlabs/key-generator:"$TAG" /keys || {
     echo 'Retrying without overriding UID'
     # Above line doesn't work on macOS + VirtualBox Docker
-    docker run --rm -it -v "$OUTPUT_DIR":/keys casperlabs/key-generator:"$TAG" /keys
+    docker run --rm -v "$OUTPUT_DIR":/keys casperlabs/key-generator:"$TAG" /keys
 }
 if [[ "$1" == "--test" ]]; then
     if [[ -f "$OUTPUT_DIR/node-id" ]] && \
