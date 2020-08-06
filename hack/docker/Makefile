@@ -65,7 +65,7 @@ node-%/up: node-% maybe-reset-highway-env
 node-%/down: $(HIGHWAY_ENV)
 	if [ -d node-$* ]; then \
 		cd node-$* && docker-compose down && cd - && \
-		docker run -it --rm \
+		docker run --rm \
 			-v $(PWD)/node-$*/logs:/var/logs/casperlabs \
 			--entrypoint sh casperlabs/node:$(CL_VERSION) \
 			-c 'rm -rf /var/logs/casperlabs/*' && \
