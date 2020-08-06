@@ -46,9 +46,10 @@ node-%: .casperlabs
 	done'
 
 	@# Link Dockerfile so we can change it and reapply.
-	@#ln -s ${PWD}/template/joe-docker-compose.yml node-$(N)/joe-docker-compose.yml
+	@#ln -s ${PWD}/template/docker-compose.yml node-$(N)/docker-compose.yml
 	@#Alternatively just make a copy so you can edit it independently.
 	cp ${PWD}/template/docker-compose.yml node-$(N)/docker-compose.yml
+	cp ${PWD}/template/start-node.sh node-$(N)/start-node.sh
 
 
 # Start node.
