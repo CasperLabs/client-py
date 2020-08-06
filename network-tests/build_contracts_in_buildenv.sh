@@ -11,20 +11,9 @@ if [[ -z "$DRONE_BUILD_NUMBER" ]]; then
          /bin/bash -c "$(cat $DIR/internal_build_script)"
 else
   # inside CI, so we are running in buildenv docker
-  cd /tmp || exit 1
-  git clone --depth 1 https://github.com/CasperLabs/CasperLabs
-
-  cd /tmp/CasperLabs/execution-engine || exit 1
-  cargo build --package faucet --target wasm32-unknown-unknown --release
-  cargo build --package do-nothing --target wasm32-unknown-unknown --release
-  cargo build --package test-payment-stored --target wasm32-unknown-unknown --release
-  cargo build --package transfer-to-account-u512-stored --target wasm32-unknown-unknown --release
-
-  cp target/wasm32-unknown-unknown/release/*.wasm "$DIR/wasm"
-  cd /
-  rm -rf /tmp/CasperLabs
-#  docker run --rm -v $DIR/wasm:/wasm -v /tmp:/tmp \
-#         -v /var/run/docker.sock:/var/run/docker.sock \
-#         casperlabs/buildenv:latest \
-#         /bin/bash -c "$(cat $DIR/internal_build_script)"
+  docker run --rm -v $DIR/wasm:/wasm -v /tmp:/tmp \
+         -p 9000:9000 \
+         -v /var/run/docker.sock:/var/run/docker.sock \
+         casperlabs/buildenv:latest \
+         /bin/bash -c "$(cat $DIR/internal_build_script)"
 fi
