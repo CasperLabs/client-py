@@ -45,6 +45,8 @@ steps:
   commands:
     - "make clean-make"
     - "make test-all"
+    - "make network-test"
+    - "make clean-network-test"
   depends_on:
     - build-python-client
 

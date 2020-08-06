@@ -26,7 +26,7 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test clean-make  ## remove all make, build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-make clean-network-test  ## remove all make, build, test, coverage and Python artifacts
 
 .make:
 	mkdir .make
@@ -61,6 +61,13 @@ test: .make/pipenv ## run tests quickly with the default Python
 
 test-all: .make/pipenv ## run tests on every Python version with tox
 	pipenv run tox
+
+clean-network-test:  ## cleanup from network-test by deleting wasm and assuring network is torn down
+	network-tests/teardown.sh
+	rm network-tests/wasm/*
+
+network-test: .make/pipenv ## standup simple network and test active calls to a network
+	network-tests/run_network_tests.sh
 
 coverage-base: .make/pipenv
 	pipenv run coverage run --source casperlabs_client -m pytest tests

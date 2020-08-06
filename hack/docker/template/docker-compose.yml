@@ -1,11 +1,5 @@
 version: "3.5"
 
-networks:
-  # Create an explicit network so we can connect to it from the client to do deployments.
-  # Create it externally so when we remove individual nodes it doesn't try to destroy it.
-  casperlabs:
-    external: true
-
 # Cross mounting volumes: https://github.com/docker/compose/issues/3211
 volumes:
   socketvolume: {}
@@ -30,7 +24,7 @@ services:
       - 404${NODE_NUMBER}1:40401
       # Port for proposals
       - 404${NODE_NUMBER}2:40402
-      # For now HTTP is exposed only from node-0 via the socat proxy in the common docker-compose.yml
+      # For now HTTP is exposed only from node-0 via the socat proxy in the common joe-docker-compose.yml
     volumes:
       # Volume for a socket to be created and shared with the execution engine.
       - socketvolume:/root/.casperlabs/sockets
@@ -43,8 +37,6 @@ services:
       - $PWD/../template/start-node.sh:/opt/docker/start-node.sh
       # Make logs available in JSON, stack traces are only available there.
       - $PWD/logs:/var/logs/casperlabs
-    networks:
-      - casperlabs
     environment:
       HOME: /root
       BOOTSTRAP_HOSTNAMES: ${BOOTSTRAP_HOSTNAMES}
@@ -78,7 +70,5 @@ services:
     hostname: execution-engine-${NODE_NUMBER}
     volumes:
       - socketvolume:/opt/docker/.casperlabs/sockets
-    networks:
-      - casperlabs
     command:
       - .casperlabs/sockets/.casper-node.sock

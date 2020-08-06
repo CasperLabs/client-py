@@ -1,4 +1,4 @@
-CL_CASPER_NUM_VALIDATORS ?= 1
+CL_CASPER_NUM_VALIDATORS ?= 1  # Network has been removed, can only be 1
 CL_SERVER_HTTP_PORT ?= 40403
 CL_VERSION ?= latest
 
@@ -9,8 +9,8 @@ RESET_HIGHWAY_ENV := rm -f $(HIGHWAY_ENV); ./scripts/highway-env.sh > $(HIGHWAY_
 .SECONDARY:
 
 # Remove all node-N environments.
-clean: down $(shell find . -type d -name "node-*" | grep -v .casperlabs | grep -v keys | awk -F '/' '{print $$2"/down"}')
-	docker network rm casperlabs || exit 0
+clean: $(shell find . -type d -name "node-*" | grep -v .casperlabs | grep -v keys | awk -F '/' '{print $$2"/down"}')
+	#docker network rm "casperlabs-$DRONE_BUILD_NUMBER" || exit 0
 	rm -rf .casperlabs
 	rm -rf .make
 	rm -rf keys
@@ -47,7 +47,7 @@ node-%: .casperlabs
 	done'
 
 	@# Link Dockerfile so we can change it and reapply.
-	@#ln -s ${PWD}/template/docker-compose.yml node-$(N)/docker-compose.yml
+	@#ln -s ${PWD}/template/joe-docker-compose.yml node-$(N)/joe-docker-compose.yml
 	@#Alternatively just make a copy so you can edit it independently.
 	cp ${PWD}/template/docker-compose.yml node-$(N)/docker-compose.yml
 
@@ -74,23 +74,8 @@ node-%/down: $(HIGHWAY_ENV)
 	fi
 	$(REFRESH_TARGETS)
 
-node-%/status:
-	docker run --rm --network casperlabs appropriate/curl -s http://node-$*:$(CL_SERVER_HTTP_PORT)/status | jq
-
-
 # Start common components.
-up: \
-		.make/docker/network \
-		.casperlabs
-	$(REFRESH_TARGETS)
-	if [ "$(CL_VERSION)" != "latest" ]; then \
-		docker-compose pull; \
-	fi
-	docker-compose -p casperlabs up -d --remove-orphans
-
-# Stop common components.
-down:
-	docker-compose -p casperlabs down
+up: .casperlabs
 
 # Start all nodes and supporting services, for convenience.
 up-all: up
@@ -98,10 +83,6 @@ up-all: up
 		$(MAKE) node-$$i/up ; \
 		((i = i + 1)) ; \
 	done'
-
-.make/docker/network:
-	docker network create casperlabs
-	mkdir -p $(dir $@) && touch $@
 
 # Generate keys and bonds.
 .casperlabs:
