@@ -10,7 +10,6 @@ RESET_HIGHWAY_ENV := rm -f $(HIGHWAY_ENV); ./scripts/highway-env.sh > $(HIGHWAY_
 
 # Remove all node-N environments.
 clean: $(shell find . -type d -name "node-*" | grep -v .casperlabs | grep -v keys | awk -F '/' '{print $$2"/down"}')
-	#docker network rm "casperlabs-$DRONE_BUILD_NUMBER" || exit 0
 	rm -rf .casperlabs
 	rm -rf .make
 	rm -rf keys
