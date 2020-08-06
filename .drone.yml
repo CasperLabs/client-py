@@ -53,6 +53,9 @@ steps:
   commands:
     - "make network-test"
     - "make clean-network-test"
+  volumes:
+    - name: docker_sock
+      path: "/var/run/docker.sock"
   depends_on:
     - test-python-client-unit
 
@@ -82,6 +85,12 @@ trigger:
   - master
   - trying
   - staging
+
+volumes:
+- name: docker_sock
+  host:
+    path: "/var/run/docker.sock"
+
 
 ---
 # Anchor for default buildenv

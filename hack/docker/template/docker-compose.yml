@@ -39,7 +39,6 @@ services:
       - $PWD/logs:/var/logs/casperlabs
       # For running from within another docker container
       - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp:/tmp
     environment:
       HOME: /root
       BOOTSTRAP_HOSTNAMES: ${BOOTSTRAP_HOSTNAMES}
