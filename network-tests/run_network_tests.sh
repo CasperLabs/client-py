@@ -12,7 +12,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 trap "./teardown.sh" EXIT
 
 cd "$DIR" || exit 1
-if [ ! "$(ls -A wasm)" ]; then
+
+if [ $(find wasm -maxdepth 1 -type f -name *.wasm | wc -l) -eq 0 ]; then
   echo "Building required WASM contracts..."
   output=$(./build_contracts_in_buildenv.sh 2>&1) || output_and_exit
 else

@@ -64,7 +64,7 @@ test-all: .make/pipenv ## run tests on every Python version with tox
 
 clean-network-test:  ## cleanup from network-test by deleting wasm and assuring network is torn down
 	network-tests/teardown.sh
-	rm network-tests/wasm/*
+	rm network-tests/wasm/*.wasm
 
 network-test: .make/pipenv ## standup simple network and test active calls to a network
 	network-tests/run_network_tests.sh
