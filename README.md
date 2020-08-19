@@ -98,7 +98,7 @@ C:\Users\alice>python -m pip install casperlabs-client
 The package `casperlabs-client` includes command line interface (CLI)
 script called `casperlabs_client`.
 
-Type `casperlabs-client --help` to see short synopsis with a list of
+Type `casperlabs_client --help` to see short synopsis with a list of
 available commands
 
 ```
