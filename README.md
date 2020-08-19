@@ -168,7 +168,7 @@ casperlabs_client --host deploy.casperlabs.io vdag --depth 10 --out dag.png
 will produce an image file similar to the one below:
 
 
-![DAG visualization example](https://raw.githubusercontent.com/CasperLabs/CasperLabs/dev/integration-testing/client/CasperLabsClient/example_vdag_output.png)
+![DAG visualization example](https://raw.githubusercontent.com/CasperLabs/client-py/dev/example_vdag_output.png)
 
 Small boxes represent blocks, labeled with short prefixes of their block hashes.
 Blocks are aligned in "lanes" representing validators that created them.
