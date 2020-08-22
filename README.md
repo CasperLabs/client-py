@@ -98,7 +98,7 @@ C:\Users\alice>python -m pip install casperlabs-client
 The package `casperlabs-client` includes command line interface (CLI)
 script called `casperlabs_client`.
 
-Type `casperlabs-client --help` to see short synopsis with a list of
+Type `casperlabs_client --help` to see short synopsis with a list of
 available commands
 
 ```
@@ -168,7 +168,7 @@ casperlabs_client --host deploy.casperlabs.io vdag --depth 10 --out dag.png
 will produce an image file similar to the one below:
 
 
-![DAG visualization example](https://raw.githubusercontent.com/CasperLabs/CasperLabs/dev/integration-testing/client/CasperLabsClient/example_vdag_output.png)
+![DAG visualization example](https://raw.githubusercontent.com/CasperLabs/client-py/dev/example_vdag_output.png)
 
 Small boxes represent blocks, labeled with short prefixes of their block hashes.
 Blocks are aligned in "lanes" representing validators that created them.
