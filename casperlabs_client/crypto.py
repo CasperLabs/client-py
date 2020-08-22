@@ -11,7 +11,6 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
-from cryptography.x509.oid import NameOID
 from Crypto.Hash import keccak
 from pyblake2 import blake2b
 
@@ -46,24 +45,35 @@ def node_public_address(public_key):
 def generate_node_certificates(private_key, public_key):
     today = datetime.datetime.today()
     one_day = datetime.timedelta(1, 0, 0)
-    address = node_public_address(
-        public_key
-    )  # .map(Base16.to_protobuf).getOrElse("local")
-    owner = f"CN={address}"
-
+    address = node_public_address(public_key)
     builder = x509.CertificateBuilder()
     builder = builder.not_valid_before(today)
 
     # TODO: Where's documentation of the decision to make keys valid for 1 year only?
     builder = builder.not_valid_after(today + 365 * one_day)
-    builder = builder.subject_name(
-        x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, owner)])
+    issuer = x509.Name(
+        [
+            x509.NameAttribute(x509.NameOID.COUNTRY_NAME, "US"),
+            x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, "CA"),
+            x509.NameAttribute(x509.NameOID.LOCALITY_NAME, "San-Diego"),
+            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, "CasperLabs, LLC"),
+            x509.NameAttribute(x509.NameOID.ORGANIZATIONAL_UNIT_NAME, "IT Department"),
+            x509.NameAttribute(x509.NameOID.COMMON_NAME, address),
+        ]
     )
-    builder = builder.issuer_name(
-        x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, owner)])
-    )
+    builder = builder.issuer_name(issuer)
+    builder = builder.subject_name(issuer)
     builder = builder.public_key(public_key)
     builder = builder.serial_number(x509.random_serial_number())
+    ski = x509.SubjectKeyIdentifier.from_public_key(public_key)
+    builder = builder.add_extension(ski, critical=False)
+    builder = builder.add_extension(
+        x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski),
+        critical=False,
+    )
+    builder = builder.add_extension(
+        x509.BasicConstraints(ca=True, path_length=None), critical=True
+    )
     certificate = builder.sign(
         private_key=private_key, algorithm=hashes.SHA256(), backend=default_backend()
     )

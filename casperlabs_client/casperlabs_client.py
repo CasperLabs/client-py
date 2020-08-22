@@ -939,10 +939,10 @@ class CasperLabsClient:
         key_pair.save_hex_base64_files(directory, consts.VALIDATOR_FILENAME_PREFIX)
 
         private_key, public_key = crypto.generate_secp256r1_key_pair()
-        node_cert, key_pem = crypto.generate_node_certificates(private_key, public_key)
+        cert_pem, key_pem = crypto.generate_node_certificates(private_key, public_key)
 
         io.write_binary_file(node_private_path, key_pem)
-        io.write_binary_file(node_cert_path, node_cert)
+        io.write_binary_file(node_cert_path, cert_pem)
         io.write_file(node_id_path, crypto.node_public_address(public_key))
 
     @api
