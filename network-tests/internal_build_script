@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# This file is shared into docker casperlabs/buildenv container for building needed WASM files
+# for running a network test against a single node.
+
+cd /tmp || exit 1
+git clone --depth 1 https://github.com/CasperLabs/CasperLabs
+
+cd /tmp/CasperLabs/execution-engine || exit 1
+cargo build --package faucet --target wasm32-unknown-unknown --release
+cargo build --package do-nothing --target wasm32-unknown-unknown --release
+cargo build --package test-payment-stored --target wasm32-unknown-unknown --release
+cargo build --package transfer-to-account-u512-stored --target wasm32-unknown-unknown --release
+
+cp target/wasm32-unknown-unknown/release/*.wasm /wasm
+cd /
+rm -rf /tmp/CasperLabs

@@ -40,13 +40,24 @@ steps:
   depends_on:
   - update-test-version
 
-- name: test-python-client
+- name: test-python-client-unit
   <<: *buildenv
   commands:
     - "make clean-make"
     - "make test-all"
   depends_on:
     - build-python-client
+
+- name: test-python-client-network
+  <<: *buildenv
+  commands:
+    - "make network-test"
+    - "make clean-network-test"
+  volumes:
+    - name: docker_sock
+      path: "/var/run/docker.sock"
+  depends_on:
+    - test-python-client-unit
 
 - name: test-pypi-publish
   image: tvasile1012/pypi:latest
@@ -74,6 +85,12 @@ trigger:
   - master
   - trying
   - staging
+
+volumes:
+- name: docker_sock
+  host:
+    path: "/var/run/docker.sock"
+
 
 ---
 # Anchor for default buildenv
