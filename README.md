@@ -1,5 +1,7 @@
 # CasperLabs Python Client API library and command line tool
 
+# Change we don't need to test CI.
+
 `casperlabs-client` is a Python package consisting of
 - a client library `casperlabs_client` that can be used to interact with
   a [CasperLabs](https://casperlabs.io/) node
