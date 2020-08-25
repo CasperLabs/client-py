@@ -193,7 +193,7 @@ to see example contracts and instructions on
 [how to compile](https://github.com/CasperLabs/CasperLabs/blob/dev/execution-engine/contracts/examples/README.md)
 them.
 
-To deploy a compiled contract from your account address:
+To deploy a compiled contract from your account address, with client as CasperLabsClient instance:
 
 ```python
 response = client.deploy(from_addr="f2cbd19d054bd2b2c06ea26714275271663a5e4503d5d059de159c3b60d81ab7",
