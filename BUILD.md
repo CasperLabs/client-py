@@ -53,7 +53,7 @@ The package can be installed for testing with `python -m pip install dist/casper
 
 If run outside of the pipenv, use `python3.7 -m pip install dist/casperlavs_client-X.X.X.tar.gz`
 
-### Building Development package
+### Installing Development package
 
 It is best practice to test the installed version of a Python package. The tests have been created to run on the installed version.
 
