@@ -1,18 +1,32 @@
 # Building the Python Client
 
 Python 3.7+ is the required version for the client.  The `Pipenv` and `Pipenv.lock` is using
-Python 3.7.
+Python 3.7.  Tox tests client with both Python 3.7 and 3.8. We recommend using
 
-### Requirements
+### install pyenv
 
-Compilation is needed for some of the cryptography dependencies for the client, so `python3.7-dev` should be installed
-with `sudo apt install python3.7-dev`.
+```
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
+echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+```
 
-We use `pipenv` for the virtual environment. This isolates installed packages for the client from your system
-python install. This can be installed on Debian based systems with `sudo apt install pipenv`.
+Fix dependencies when installing and building python.
 
-`pipenv` is installed to the user's `.local/bin` folder. This will not be accessible without adding your
-`~/.local/bin` folder to `$PATH` in `.bashrc` or with other means.
+```
+sudo apt install libreadline-dev libbz2-dev libsqlite3-dev libffi-dev
+```
+
+#### Installing Python 3.7 and 3.8
+(Feel free to select later versions of 3.8 if available.)
+```
+pyenv install 3.7.8
+pyenv install 3.7-dev
+pyenv install 3.8.3
+pyenv install 3.8-dev
+```
 
 ### Initialize pipenv
 
@@ -35,15 +49,6 @@ To run the hook outside of git triggered events, you can use:
 
 Many functions are available in the Makefile.  To see all commands use `make help`.
 
-### CasperLabs repo dependency
-
-Building this package depends on the `proto` files available in the CasperLabs repo.  This is expected
-to be in the same level directory of `client-py` repo.
-
-For running tests inside `manual-test`, the `CasperLabs/hack/docker` network stand-up is used.  This expects
-all of the prerequisites to run `make docker-build-all` in the root of `CasperLabs` repo as well as
-`make contracts-rs` in `CasperLabs/execution-engine` for some `.wasm` contracts that are used in testing.
-
 ### Building Distribution package
 
 `python setup.py sdist` will build the Python Client for distributing into `dist/casperlabs_client-X.X.X.tar.gz`.
@@ -53,7 +58,7 @@ The package can be installed for testing with `python -m pip install dist/casper
 
 If run outside of the pipenv, use `python3.7 -m pip install dist/casperlavs_client-X.X.X.tar.gz`
 
-### Building Development package
+### Installing Development package
 
 It is best practice to test the installed version of a Python package. The tests have been created to run on the installed version.
 

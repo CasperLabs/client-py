@@ -19,17 +19,13 @@ These steps are required prior to activating the Python environment every time t
 
 ##### For Ubuntu 18.04 follow these steps to activate the environment:
 ```
-sudo apt install gcc
-sudo apt install python3.7
-sudo apt-get install python3.7-dev
+sudo apt install gcc python3.7 python3.7-dev
 virtualenv -p python3.7 env
 ```
 
 ##### For Ubuntu 20.04 follow these steps:
 ```
-sudo apt install gcc
-sudo apt install python3.8
-sudo apt-get install python3.8-dev
+sudo apt install gcc python3.8 python3.8-dev
 virtualenv -p python3.8 env
 ```
 
@@ -193,7 +189,7 @@ to see example contracts and instructions on
 [how to compile](https://github.com/CasperLabs/CasperLabs/blob/dev/execution-engine/contracts/examples/README.md)
 them.
 
-To deploy a compiled contract from your account address:
+To deploy a compiled contract from your account address, with client as CasperLabsClient instance:
 
 ```python
 response = client.deploy(from_addr="f2cbd19d054bd2b2c06ea26714275271663a5e4503d5d059de159c3b60d81ab7",
