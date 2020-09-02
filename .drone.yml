@@ -62,7 +62,7 @@ steps:
     skip_build: true
   when:
     branch:
-    - dev
+    - master
     event:
     - push
   depends_on:
@@ -70,7 +70,6 @@ steps:
 
 trigger:
   branch:
-  - dev
   - master
   - trying
   - staging
@@ -146,7 +145,6 @@ trigger:
   status:
   - failure
   branch:
-  - dev
   - master
   - trying
   - staging
