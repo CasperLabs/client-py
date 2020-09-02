@@ -59,11 +59,6 @@ class KeyHolder(ABC):
         return self._private_key
 
     @property
-    def private_key_hex(self) -> str:
-        """ Returns or generates private key in hex encoding from other internal fields """
-        return f"{self._hex_prefix()}{self.private_key.hex()}"
-
-    @property
     def private_key_base64(self) -> str:
         """ Returns or generates private key in base64 encoding from other internal fields """
         return base64.b64encode(self.private_key).decode("UTF-8")
@@ -131,7 +126,7 @@ class KeyHolder(ABC):
         io.write_binary_file(public_path, self.public_key_pem)
 
         public_hex_path = Path(save_directory) / consts.PUBLIC_KEY_HEX_FILENAME
-        io.write_file(public_hex_path, self.public_key_hex)
+        io.write_file(public_hex_path, f"{self._hex_prefix()}{self.public_key_hex}")
 
     @staticmethod
     @abstractmethod
