@@ -13,10 +13,12 @@ HELP: str = """Generates account keys into existing directory
 
 Usage: casperlabs-client keygen <existing output directory>
 Command will override existing files!
+
 Generated files:
-   account-id-hex       # Hash of public key for use on the system as hex text
-   account-private.pem  # private key based on given algorithm, default ed25519
-   account-public.pem   # public key based on given algorithm, default ed25519"""
+   public_key.pem  # public key in pem format
+   secret_key.pem  # secret key in pem format
+   public_key_hex  # public key in hex format with leading algorithm byte
+"""
 OPTIONS = (DIRECTORY_FOR_WRITE_OPTION, ALGORITHM_OPTION)
 
 

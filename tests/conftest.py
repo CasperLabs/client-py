@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import shutil
 from pathlib import Path
 
 import pytest
@@ -6,8 +7,9 @@ import tempfile
 from casperlabs_client import CasperLabsClient, key_holders
 from casperlabs_client.consts import (
     SUPPORTED_KEY_ALGORITHMS,
-    PUBLIC_KEY_FILENAME_SUFFIX,
-    PRIVATE_KEY_FILENAME_SUFFIX,
+    PUBLIC_KEY_FILENAME,
+    PRIVATE_KEY_FILENAME,
+    PUBLIC_KEY_HEX_FILENAME,
 )
 
 
@@ -22,9 +24,16 @@ def account_keys_directory():
     with tempfile.TemporaryDirectory() as directory:
         for key_algorithm in SUPPORTED_KEY_ALGORITHMS:
             client = CasperLabsClient()
-            client.keygen(
-                directory, algorithm=key_algorithm, filename_prefix=key_algorithm
-            )
+            client.keygen(directory, algorithm=key_algorithm)
+            for file_name in (
+                PUBLIC_KEY_FILENAME,
+                PUBLIC_KEY_HEX_FILENAME,
+                PRIVATE_KEY_FILENAME,
+            ):
+                shutil.move(
+                    Path(directory) / file_name,
+                    Path(directory) / f"{key_algorithm}{file_name}",
+                )
         yield Path(directory)
 
 
@@ -38,8 +47,8 @@ def validator_keys_directory():
 
 def key_paths(algorithm, directory):
     return (
-        directory / f"{algorithm}{PRIVATE_KEY_FILENAME_SUFFIX}",
-        directory / f"{algorithm}{PUBLIC_KEY_FILENAME_SUFFIX}",
+        directory / f"{algorithm}{PRIVATE_KEY_FILENAME}",
+        directory / f"{algorithm}{PUBLIC_KEY_FILENAME}",
     )
 
 

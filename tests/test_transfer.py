@@ -3,7 +3,7 @@ import pytest
 
 from casperlabs_client import CasperLabsClient, InternalError
 from casperlabs_client.consts import (
-    PRIVATE_KEY_FILENAME_SUFFIX,
+    PRIVATE_KEY_FILENAME,
     SUPPORTED_KEY_ALGORITHMS,
 )
 
@@ -17,8 +17,7 @@ def test_basic_transfer_to_node_comm_failure(account_keys_directory, algorithm):
             from_addr="1212121212121212121212121212121212121212121212121212121212121212",
             target_account="0000000000000000000000000000000000000000000000000000000000000000",
             amount=10000,
-            private_key=account_keys_directory
-            / f"{algorithm}{PRIVATE_KEY_FILENAME_SUFFIX}",
+            private_key=account_keys_directory / f"{algorithm}{PRIVATE_KEY_FILENAME}",
             payment_amount=100000,
         )
     assert "failed to connect" in str(excinfo.value)

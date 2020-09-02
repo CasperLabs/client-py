@@ -3,7 +3,7 @@ from typing import Union
 from pathlib import Path
 
 import ecdsa
-from casperlabs_client.consts import SECP256K1_KEY_ALGORITHM
+from casperlabs_client.consts import SECP256K1_KEY_ALGORITHM, SECP256K1_HEX_PREFIX
 from casperlabs_client.io import read_binary_file
 from .key_holder import KeyHolder
 
@@ -32,6 +32,9 @@ class SECP256K1Key(KeyHolder):
             public_key,
             SECP256K1_KEY_ALGORITHM,
         )
+
+    def _hex_prefix(self) -> str:
+        return SECP256K1_HEX_PREFIX
 
     def _private_key_pem_from_private_key(self) -> bytes:
         return ecdsa.SigningKey.from_string(self.private_key, curve=self.CURVE).to_pem()

@@ -6,12 +6,9 @@ def test_validator_key_files_are_created(validator_keys_directory):
         "node-id",
         "node.certificate.pem",
         "node.key.pem",
-        "validator-pk",
-        "validator-pk-hex",
-        "validator-id",
-        "validator-id-hex",
-        "validator-private.pem",
-        "validator-public.pem",
+        "secret_key.pem",
+        "public_key.pem",
+        "public_key_hex",
     )
     for filename in expected_files:
         file_path = validator_keys_directory / filename
