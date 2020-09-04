@@ -6,7 +6,12 @@ from .key_holder import KeyHolder  # noqa:F401
 from .ed25519 import ED25519Key
 from .secp256k1 import SECP256K1Key
 
-from ..consts import ED25519_KEY_ALGORITHM, SECP256K1_KEY_ALGORITHM
+from ..consts import (
+    ED25519_KEY_ALGORITHM,
+    SECP256K1_KEY_ALGORITHM,
+    HEX_PREFIX_LEN,
+    HEX_KEY_PREFIXES,
+)
 
 
 def class_from_algorithm(algorithm: str):
@@ -19,6 +24,24 @@ def class_from_algorithm(algorithm: str):
         return class_map[algorithm]
     except KeyError:
         ValueError(f"algorithm should be in ({class_map.keys()})")
+
+
+def key_holder_from_hex(public_key_hex: str):
+    """
+    Will create KeyHolder class from hex public key with leading algorithm byte
+
+    :param public_key_hex:  Public key in hex with algorithm prefix byte.
+    :return: KeyHolder object for given key
+    """
+    try:
+        algorithm = HEX_KEY_PREFIXES[public_key_hex[:HEX_PREFIX_LEN]]
+    except KeyError:
+        raise ValueError(
+            f"First bytes of public_key_hex ({public_key_hex}) does not match a supported key algorithm."
+        )
+    return key_holder_object(
+        algorithm, public_key=bytes.fromhex(public_key_hex[HEX_PREFIX_LEN:])
+    )
 
 
 def key_holder_object(
@@ -39,7 +62,7 @@ def key_holder_object(
     :param private_key_pem_path: Path to pem file containing private key (used as second option)
     :param public_key:           public key in bytes (used as third option)
     :param public_key_pem_path:  Path to pem file containing public key (used as fourth option)
-    :return:
+    :return: KeyHolder object for given algorithm
     """
     class_object = class_from_algorithm(algorithm)
     if private_key is not None:

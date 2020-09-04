@@ -17,11 +17,10 @@ Generated files:
    node.certificate.pem  # TLS certificate used for node-to-node interaction encryption
                          # derived from node.key.pem
    node.key.pem          # secp256r1 private key
-   validator-id          # validator ID in Base64 format; can be used in accounts.csv
-                         # derived from validator.public.pem
-   validator-id-hex      # validator ID in hex, derived from validator.public.pem
-   validator-private.pem # ed25519 private key
-   validator-public.pem  # ed25519 public key"""
+   public_key.pem        # public key in pem format
+   secret_key.pem        # secret key in pem format
+   public_key_hex        # public key in hex format with leading algorithm byte
+"""
 OPTIONS = (DIRECTORY_FOR_WRITE_OPTION,)
 
 

@@ -26,6 +26,11 @@ class KeyHolder(ABC):
         self._public_key = public_key
         self._algorithm = algorithm
 
+    @abstractmethod
+    def _hex_prefix(self) -> str:
+        """ Returns proper byte prefix in hex for algorithm """
+        pass
+
     @property
     def algorithm(self):
         """ String representation of the key algorithm """
@@ -52,11 +57,6 @@ class KeyHolder(ABC):
                 raise ValueError("Must have either _private_key or _private_key_pem.")
             self._private_key = self._private_key_from_private_key_pem()
         return self._private_key
-
-    @property
-    def private_key_hex(self) -> str:
-        """ Returns or generates private key in hex encoding from other internal fields """
-        return self.private_key.hex()
 
     @property
     def private_key_base64(self) -> str:
@@ -108,57 +108,25 @@ class KeyHolder(ABC):
     def _public_key_from_private_key(self):
         pass
 
-    def save_pem_files(
-        self,
-        save_directory: Union[str, Path],
-        filename_prefix: str = consts.DEFAULT_KEY_FILENAME_PREFIX,
-    ) -> None:
+    def save_key_files(self, save_directory: Union[str, Path]) -> None:
         """
         Save key pairs out as public and private pem files.
 
         :param save_directory:   str or Path to directory for saving pem files.
-        :param filename_prefix:  prefix of filename to be used for save.
-        """
-        private_path = (
-            Path(save_directory)
-            / f"{filename_prefix}{consts.PRIVATE_KEY_FILENAME_SUFFIX}"
-        )
-        io.write_binary_file(private_path, self.private_key_pem)
-
-        public_path = (
-            Path(save_directory)
-            / f"{filename_prefix}{consts.PUBLIC_KEY_FILENAME_SUFFIX}"
-        )
-        io.write_binary_file(public_path, self.public_key_pem)
-
-    def save_hex_base64_files(
-        self,
-        directory: Union[Path, str],
-        filename_prefix: str = consts.DEFAULT_KEY_FILENAME_PREFIX,
-    ) -> None:
-        """
-        Saves out hex/base16 and base64 versions of account hash and public key.
-
-        :param directory: Directory in which to create files. Must exist.
-        :param filename_prefix: Prefix to use in files. Defaults to consts.DEFAULT_KEY_FILENAME_PREFIX
 
         Generated files:
-            {filename_prefix}-id-hex  # account hash in hex/base16 format.
-            {filename_prefix}-id      # account hash in base64 format.
-            {filename_prefix}-pk-hex  # account public key in hex/base16 format.
-            {filename_prefix}-pk      # account public key in base64 format.
+            public_key.pem  # public key in pem format
+            secret_key.pem  # secret key in pem format
+            public_key_hex  # public key in hex format with leading algorithm byte
         """
-        pairs = [
-            (consts.ACCOUNT_PRIVATE_KEY_HEX_FILENAME_SUFFIX, self.public_key_hex),
-            (
-                consts.ACCOUNT_PRIVATE_KEY_BASE64_FILENAME_SUFFIX,
-                self.private_key_base64,
-            ),
-            (consts.ACCOUNT_HASH_HEX_FILENAME_SUFFIX, self.account_hash_hex),
-            (consts.ACCOUNT_HASH_BASE64_FILENAME_SUFFIX, self.account_hash_base64),
-        ]
-        for suffix, value in pairs:
-            io.write_file(directory / f"{filename_prefix}{suffix}", value)
+        private_path = Path(save_directory) / consts.PRIVATE_KEY_FILENAME
+        io.write_binary_file(private_path, self.private_key_pem)
+
+        public_path = Path(save_directory) / consts.PUBLIC_KEY_FILENAME
+        io.write_binary_file(public_path, self.public_key_pem)
+
+        public_hex_path = Path(save_directory) / consts.PUBLIC_KEY_HEX_FILENAME
+        io.write_file(public_hex_path, f"{self._hex_prefix()}{self.public_key_hex}")
 
     @staticmethod
     @abstractmethod

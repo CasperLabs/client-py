@@ -673,10 +673,7 @@ class CasperLabsClient:
 
     @api
     def keygen(
-        self,
-        directory: Union[Path, str],
-        algorithm: str = ED25519_KEY_ALGORITHM,
-        filename_prefix: str = consts.DEFAULT_KEY_FILENAME_PREFIX,
+        self, directory: Union[Path, str], algorithm: str = ED25519_KEY_ALGORITHM,
     ) -> None:
         """
         Generates account keys into existing directory.
@@ -688,12 +685,9 @@ class CasperLabsClient:
         :return: None
 
         Generated files:
-           {filename_prefix}-id           # Hash of public key to use in the system (base64 encoded)
-           {filename_prefix}-id-hex       # Hash of public key to use in the system (base16/hex encoded)
-           {filename_prefix}-pk           # Public key (base64 encoded)
-           {filename_prefix}-pk-hex       # Public key (base16/hex encoded)
-           {filename_prefix}-private.pem  # private key pem file
-           {filename_prefix}-public.pem   # public key pen file
+            public_key.pem  # public key in pem format
+            secret_key.pem  # secret key in pem format
+            public_key_hex  # public key in hex format with leading algorithm byte
         """
         directory = Path(directory)
         if not directory.exists():
@@ -701,8 +695,7 @@ class CasperLabsClient:
 
         key_holder_generator = key_holders.class_from_algorithm(algorithm)
         key_holder = key_holder_generator.generate()
-        key_holder.save_pem_files(directory, filename_prefix)
-        key_holder.save_hex_base64_files(directory, filename_prefix)
+        key_holder.save_key_files(directory)
 
     @api
     def balance(self, address: str, block_hash: str) -> int:
@@ -919,12 +912,9 @@ class CasperLabsClient:
            node.certificate.pem  # TLS certificate used for node-to-node interaction encryption
                                  # derived from node.key.pem
            node.key.pem          # secp256r1 private key
-           validator-pk          # validator public key in base64 format
-           validator-pk-hex      # validator public key in hex/base16
-           validator-id          # validator account hash in base64 format
-           validator-id-hex      # validator account hash in hex/base16
-           validator-private.pem # ed25519 private key
-           validator-public.pem  # ed25519 public key
+           public_key.pem        # public key in pem format
+           secret_key.pem        # secret key in pem format
+           public_key_hex        # public key in hex format with leading algorithm byte
         """
         directory = Path(directory)
         if not directory.exists():
@@ -935,8 +925,7 @@ class CasperLabsClient:
         node_id_path = directory / consts.NODE_ID_FILENAME
 
         key_pair = key_holders.ED25519Key.generate()
-        key_pair.save_pem_files(directory, consts.VALIDATOR_FILENAME_PREFIX)
-        key_pair.save_hex_base64_files(directory, consts.VALIDATOR_FILENAME_PREFIX)
+        key_pair.save_key_files(directory)
 
         private_key, public_key = crypto.generate_secp256r1_key_pair()
         cert_pem, key_pem = crypto.generate_node_certificates(private_key, public_key)

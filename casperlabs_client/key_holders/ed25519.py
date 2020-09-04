@@ -6,7 +6,7 @@ from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
-from casperlabs_client.consts import ED25519_KEY_ALGORITHM
+from casperlabs_client.consts import ED25519_KEY_ALGORITHM, ED25519_HEX_PREFIX
 from casperlabs_client.io import read_binary_file
 from .key_holder import KeyHolder
 
@@ -28,6 +28,9 @@ class ED25519Key(KeyHolder):
             public_key,
             ED25519_KEY_ALGORITHM,
         )
+
+    def _hex_prefix(self) -> str:
+        return ED25519_HEX_PREFIX
 
     @staticmethod
     def _parse_pem_data_line(pem_file_data: bytes) -> bytes:
