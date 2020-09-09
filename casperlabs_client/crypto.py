@@ -32,9 +32,10 @@ def node_public_address(public_key):
     x, y = numbers.x, numbers.y
 
     def int_to_32_bytes(x):
-        return x.to_bytes(x.bit_length(), byteorder="little")[0:32]
+        return x.to_bytes(x.bit_length(), byteorder="big")[-32:]
 
     a = int_to_32_bytes(x) + int_to_32_bytes(y)
+    print(a.hex())
 
     keccak_hash = keccak.new(digest_bits=256)
     keccak_hash.update(a)
