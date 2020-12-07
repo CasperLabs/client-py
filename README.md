@@ -1,3 +1,6 @@
+# DEPRECATEDD - ONLY WORKS WITH SCALA NODE
+The python client is deprecated, until such time that the community wishes to update it to work with the latest API's
+
 # CasperLabs Python Client API library and command line tool
 
 `casperlabs-client` is a Python package consisting of
